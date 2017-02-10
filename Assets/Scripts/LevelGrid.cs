@@ -30,12 +30,12 @@ public class LevelGrid : MonoBehaviour {
 	public void InitializeGrid(char[][] levelData, EmptyPlatformSquare emptyPrefab, SolidPlatformSquare solidPrefab, WinPlatformSquare winPrefab, Player player) {
 		int gridWidth = levelData[0].Length;
 		int gridHeight = levelData.Length;
-		Debug.Log (gridWidth);
-		Debug.Log (gridHeight);
 
 		PlatformSquareData emptySquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Empty Square Prototype");
 		PlatformSquareData solidPlatformData = Resources.Load<PlatformSquareData> ("Platform Squares/Solid Platform Prototype");
 		PlatformSquareData winSquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Win Platform Prototype");
+
+		DeleteGrid ();
 
 		GridCoord playerStart = new GridCoord(0, 0);
 		m_grid = new PlatformSquare[gridWidth, gridHeight];
@@ -76,5 +76,12 @@ public class LevelGrid : MonoBehaviour {
 
 	public bool IsValidGridPosition(GridCoord coords) {
 		return (coords.x >= 0 && coords.x < m_grid.GetLength (0) && coords.y >= 0 && coords.y < m_grid.GetLength (1));
+	}
+
+	void DeleteGrid() {
+		PlatformSquare[] squares = GetComponentsInChildren<PlatformSquare> ();
+		for (int i = 0; i < squares.Length; ++i) {
+			GameObject.Destroy (squares[i].gameObject);
+		}
 	}
 }
