@@ -1,4 +1,8 @@
-# Level one
+--o-o-o-
+-o-s-o-o
+--e-o-o-
+------tT
+###
 o-ooo-o-
 -o-o-o-o
 o-o-o-o-
@@ -8,7 +12,6 @@ o-o-o-o-
 o-s-o-o-
 -e-o-o-o
 ###
-# Level two
 --o-o-o-
 -o-s-o-o
 --o-e-o-

@@ -17,6 +17,8 @@ public class LevelManager : MonoBehaviour {
 	public EmptyPlatformSquare emptyPlatformSquarePrefab;
 	public SolidPlatformSquare solidPlatformSquarePrefab;
 	public WinPlatformSquare winPlatformSquarePrefab;
+	public ToggleTriggerPlatformSquare toggleTriggerPlatformSquare;
+	public TriggeredPlatformSquare triggeredPlatformSquare;
 
 	public string levelFilename;
 
@@ -98,6 +100,7 @@ public class LevelManager : MonoBehaviour {
 
 		if (newPosition != m_player.CurrentPosition && m_grid.IsValidGridPosition(newPosition)) {
 			m_player.CurrentPosition = newPosition;
+			m_grid.Grid [newPosition.x, newPosition.y].OnPlayerLandsHere (m_player);
 
 			if (m_grid.Grid [newPosition.x, newPosition.y] is WinPlatformSquare) {
 				Debug.Log ("You Win!");
@@ -109,8 +112,8 @@ public class LevelManager : MonoBehaviour {
 				}
 			}
 			else if (!m_grid.Grid [newPosition.x, newPosition.y].CanPlayerLandHereNow ()) {
-				Debug.Log ("Game Over!");
-				SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
+				Debug.Log ("You Died!");
+				SetLevel (m_activeLevel);
 			}
 		}
 
@@ -155,7 +158,7 @@ public class LevelManager : MonoBehaviour {
 	void SetLevel(int levelIndex) {
 		if (levelIndex >= 0 && m_levels.Count > levelIndex) {
 			m_activeLevel = levelIndex;
-			m_grid.InitializeGrid (m_levels[levelIndex].levelGrid, emptyPlatformSquarePrefab, solidPlatformSquarePrefab, winPlatformSquarePrefab, m_player);
+			m_grid.InitializeGrid (m_levels[levelIndex].levelGrid, emptyPlatformSquarePrefab, solidPlatformSquarePrefab, winPlatformSquarePrefab, toggleTriggerPlatformSquare, triggeredPlatformSquare, m_player);
 			Debug.Log ("Loaded level " + levelIndex);
 		}
 	}

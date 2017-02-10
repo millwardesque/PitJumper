@@ -27,18 +27,22 @@ public class LevelGrid : MonoBehaviour {
 		get { return m_grid; }
 	}
 
-	public void InitializeGrid(char[][] levelData, EmptyPlatformSquare emptyPrefab, SolidPlatformSquare solidPrefab, WinPlatformSquare winPrefab, Player player) {
+	public void InitializeGrid(char[][] levelData, EmptyPlatformSquare emptyPrefab, SolidPlatformSquare solidPrefab, WinPlatformSquare winPrefab, ToggleTriggerPlatformSquare toggleTriggerPlatformSquare, TriggeredPlatformSquare triggeredPlatformSquare, Player player) {
 		int gridWidth = levelData[0].Length;
 		int gridHeight = levelData.Length;
 
 		PlatformSquareData emptySquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Empty Square Prototype");
 		PlatformSquareData solidPlatformData = Resources.Load<PlatformSquareData> ("Platform Squares/Solid Platform Prototype");
 		PlatformSquareData winSquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Win Platform Prototype");
+		PlatformSquareData toggleTriggerSquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Toggle Trigger Prototype");
+		PlatformSquareData triggeredSquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Triggered Platform Prototype");
 
 		DeleteGrid ();
 
 		GridCoord playerStart = new GridCoord(0, 0);
 		m_grid = new PlatformSquare[gridWidth, gridHeight];
+		ToggleTriggerPlatformSquare toggleTriggerSquare = null;
+		TriggeredPlatformSquare triggeredSquare = null;
 		for (int x = 0; x < gridWidth; ++x) {
 			for (int y = 0; y < gridHeight; ++y) {
 				if (levelData [y][x] == 'e') {
@@ -54,7 +58,16 @@ public class LevelGrid : MonoBehaviour {
 					playerStart = new GridCoord (x, y);
 					m_grid [x, y] = Instantiate<SolidPlatformSquare> (solidPrefab, this.transform);
 					m_grid [x, y].InitializeSquareData (solidPlatformData);
-				} else {
+				} else if (levelData [y][x] == 'T') {
+					m_grid [x, y] = Instantiate<ToggleTriggerPlatformSquare> (toggleTriggerPlatformSquare, this.transform);
+					m_grid [x, y].InitializeSquareData (toggleTriggerSquareData);
+					toggleTriggerSquare = m_grid [x, y] as ToggleTriggerPlatformSquare;
+				} else if (levelData [y][x] == 't') {
+					m_grid [x, y] = Instantiate<TriggeredPlatformSquare> (triggeredPlatformSquare, this.transform);
+					m_grid [x, y].InitializeSquareData (triggeredSquareData);
+					triggeredSquare = m_grid [x, y] as TriggeredPlatformSquare;
+				}
+				else {
 					Debug.Log (string.Format ("Unknown grid square type '{0}' at ({1}, {2})", levelData [x][y], x, y));
 					Destroy (m_grid [x, y]);
 					continue;
@@ -63,6 +76,14 @@ public class LevelGrid : MonoBehaviour {
 				m_grid [x, y].name = "Grid (" + x + ", " + y + ")";
 				m_grid [x, y].Grid = this;
 				m_grid [x, y].GridPosition = new GridCoord (x, y);
+			}
+		}
+
+		if (triggeredSquare || toggleTriggerSquare) {
+			if (triggeredSquare && toggleTriggerSquare) {
+				toggleTriggerSquare.triggerSquare = triggeredSquare;
+			} else {
+				Debug.Log ("Warning: There is a trigger square with no toggle square, or vice-versa");
 			}
 		}
 

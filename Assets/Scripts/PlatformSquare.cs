@@ -27,4 +27,6 @@ public abstract class PlatformSquare : MonoBehaviour {
 
 	public abstract bool CanPlayerLandHereNow();
 	public abstract bool IsLandableSquare();
+
+	public virtual void OnPlayerLandsHere(Player player) { }
 }
