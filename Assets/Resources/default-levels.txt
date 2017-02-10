@@ -1,0 +1,10 @@
+# Level one
+o-ooo-o-
+-o-o-o-o
+o-o-o-o-
+-o-o-o-o
+o-o-o-o-
+-o-o-o-o
+o-s-o-o-
+-e-o-o-o
+###

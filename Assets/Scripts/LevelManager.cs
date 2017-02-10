@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Text.RegularExpressions;
 
 public class LevelManager : MonoBehaviour {
 	public Player playerPrefab;
@@ -94,17 +95,26 @@ public class LevelManager : MonoBehaviour {
 		m_player = Instantiate<Player> (playerPrefab);
 		m_player.name = "Player";
 
-		string[,] levelString = new string[,] {
-			{ "e", "-", "o", "-", "o", "-", "o", "-" },
-			{ "-", "o", "-", "o", "-", "o", "-", "o" },
-			{ "o", "-", "o", "-", "o", "-", "o", "o" },
-			{ "-", "o", "-", "o", "-", "o", "-", "o" },
-			{ "o", "-", "o", "-", "o", "-", "o", "-" },
-			{ "-", "o", "-", "o", "-", "o", "-", "o" },
-			{ "o", "-", "o", "-", "o", "-", "o", "-" },
-			{ "-", "s", "-", "o", "-", "o", "-", "o" },
-		};
+		List<char[]> levelData = new List<char[]>();
 
-		m_grid.InitializeGrid (levelString, emptyPlatformSquarePrefab, solidPlatformSquarePrefab, winPlatformSquarePrefab, m_player);
+		Regex endLevelPattern = new Regex(@"^###");
+		Regex commentPattern = new Regex(@"^#");
+		TextAsset levelText = Resources.Load<TextAsset> ("default-levels");
+		string rawLevelString = levelText.text;
+		string[] rows = rawLevelString.Split(new string[]{"\n"}, System.StringSplitOptions.RemoveEmptyEntries);
+		for (int i = 0; i < rows.Length; ++i) {
+			string row = rows [i];
+			if (endLevelPattern.IsMatch (row)) {
+				break;
+			}
+			else if (commentPattern.IsMatch (row)) {
+				// Do nothing.
+			} else {
+				char[] levelRow = row.ToCharArray();
+				levelData.Insert(0, levelRow);
+			}
+		}
+
+		m_grid.InitializeGrid (levelData.ToArray(), emptyPlatformSquarePrefab, solidPlatformSquarePrefab, winPlatformSquarePrefab, m_player);
 	}
 }

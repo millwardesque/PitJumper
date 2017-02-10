@@ -27,9 +27,11 @@ public class LevelGrid : MonoBehaviour {
 		get { return m_grid; }
 	}
 
-	public void InitializeGrid(string[,] stringGrid, EmptyPlatformSquare emptyPrefab, SolidPlatformSquare solidPrefab, WinPlatformSquare winPrefab, Player player) {
-		int gridWidth = stringGrid.GetLength (0);
-		int gridHeight = stringGrid.GetLength (1);
+	public void InitializeGrid(char[][] levelData, EmptyPlatformSquare emptyPrefab, SolidPlatformSquare solidPrefab, WinPlatformSquare winPrefab, Player player) {
+		int gridWidth = levelData[0].Length;
+		int gridHeight = levelData.Length;
+		Debug.Log (gridWidth);
+		Debug.Log (gridHeight);
 
 		PlatformSquareData emptySquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Empty Square Prototype");
 		PlatformSquareData solidPlatformData = Resources.Load<PlatformSquareData> ("Platform Squares/Solid Platform Prototype");
@@ -39,21 +41,21 @@ public class LevelGrid : MonoBehaviour {
 		m_grid = new PlatformSquare[gridWidth, gridHeight];
 		for (int x = 0; x < gridWidth; ++x) {
 			for (int y = 0; y < gridHeight; ++y) {
-				if (stringGrid [x, y] == "e") {
+				if (levelData [y][x] == 'e') {
 					m_grid [x, y] = Instantiate<WinPlatformSquare> (winPrefab, this.transform);
 					m_grid [x, y].InitializeSquareData (winSquareData);
-				} else if (stringGrid [x, y] == "-") {
+				} else if (levelData [y][x] == '-') {
 					m_grid [x, y] = Instantiate<EmptyPlatformSquare> (emptyPrefab, this.transform);
 					m_grid [x, y].InitializeSquareData (emptySquareData);
-				} else if (stringGrid [x, y] == "o") {
+				} else if (levelData [y][x] == 'o') {
 					m_grid [x, y] = Instantiate<SolidPlatformSquare> (solidPrefab, this.transform);
 					m_grid [x, y].InitializeSquareData (solidPlatformData);
-				} else if (stringGrid [x, y] == "s") {
+				} else if (levelData [y][x] == 's') {
 					playerStart = new GridCoord (x, y);
 					m_grid [x, y] = Instantiate<SolidPlatformSquare> (solidPrefab, this.transform);
 					m_grid [x, y].InitializeSquareData (solidPlatformData);
 				} else {
-					Debug.Log (string.Format ("Unknown grid square type '{0}' at ({1}, {2})", stringGrid [x, y], x, y));
+					Debug.Log (string.Format ("Unknown grid square type '{0}' at ({1}, {2})", levelData [x][y], x, y));
 					Destroy (m_grid [x, y]);
 					continue;
 				}
