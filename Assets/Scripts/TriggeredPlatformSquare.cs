@@ -21,6 +21,9 @@ public class TriggeredPlatformSquare : PlatformSquare {
 		if (!m_isTriggered) {
 			m_isTriggered = true;
 			GetComponent<SpriteRenderer> ().enabled = true;
+		} else {
+			m_isTriggered = false;
+			GetComponent<SpriteRenderer> ().enabled = false;
 		}
 	}
 }

@@ -5,6 +5,9 @@ using UnityEngine;
 public class ToggleTriggerPlatformSquare : PlatformSquare {
 	public TriggeredPlatformSquare triggerSquare;
 
+	public bool oneWayToggle = false;
+	bool m_canToggle = true;
+
 	public override bool CanPlayerLandHereNow() {
 		return true;
 	}
@@ -14,8 +17,12 @@ public class ToggleTriggerPlatformSquare : PlatformSquare {
 	}
 
 	public override void OnPlayerLandsHere(Player player) {
-		if (triggerSquare != null) {
+		if (triggerSquare != null && m_canToggle) {
 			triggerSquare.Trigger ();
+
+			if (oneWayToggle) {
+				m_canToggle = false;
+			}
 		}
 	}
 }

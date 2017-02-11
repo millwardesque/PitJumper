@@ -41,8 +41,11 @@ public class LevelGrid : MonoBehaviour {
 
 		GridCoord playerStart = new GridCoord(0, 0);
 		m_grid = new PlatformSquare[gridWidth, gridHeight];
-		ToggleTriggerPlatformSquare toggleTriggerSquare = null;
-		TriggeredPlatformSquare triggeredSquare = null;
+		ToggleTriggerPlatformSquare toggleTriggerSquare1 = null;
+		TriggeredPlatformSquare triggeredSquare1 = null;
+
+		ToggleTriggerPlatformSquare toggleTriggerSquare2 = null;
+		TriggeredPlatformSquare triggeredSquare2 = null;
 		for (int x = 0; x < gridWidth; ++x) {
 			for (int y = 0; y < gridHeight; ++y) {
 				if (levelData [y][x] == 'e') {
@@ -61,11 +64,19 @@ public class LevelGrid : MonoBehaviour {
 				} else if (levelData [y][x] == 'T') {
 					m_grid [x, y] = Instantiate<ToggleTriggerPlatformSquare> (toggleTriggerPlatformSquare, this.transform);
 					m_grid [x, y].InitializeSquareData (toggleTriggerSquareData);
-					toggleTriggerSquare = m_grid [x, y] as ToggleTriggerPlatformSquare;
+					toggleTriggerSquare1 = m_grid [x, y] as ToggleTriggerPlatformSquare;
 				} else if (levelData [y][x] == 't') {
 					m_grid [x, y] = Instantiate<TriggeredPlatformSquare> (triggeredPlatformSquare, this.transform);
 					m_grid [x, y].InitializeSquareData (triggeredSquareData);
-					triggeredSquare = m_grid [x, y] as TriggeredPlatformSquare;
+					triggeredSquare1 = m_grid [x, y] as TriggeredPlatformSquare;
+				} else if (levelData [y][x] == 'U') {
+					m_grid [x, y] = Instantiate<ToggleTriggerPlatformSquare> (toggleTriggerPlatformSquare, this.transform);
+					m_grid [x, y].InitializeSquareData (toggleTriggerSquareData);
+					toggleTriggerSquare2 = m_grid [x, y] as ToggleTriggerPlatformSquare;
+				} else if (levelData [y][x] == 'u') {
+					m_grid [x, y] = Instantiate<TriggeredPlatformSquare> (triggeredPlatformSquare, this.transform);
+					m_grid [x, y].InitializeSquareData (triggeredSquareData);
+					triggeredSquare2 = m_grid [x, y] as TriggeredPlatformSquare;
 				}
 				else {
 					Debug.Log (string.Format ("Unknown grid square type '{0}' at ({1}, {2})", levelData [x][y], x, y));
@@ -79,11 +90,19 @@ public class LevelGrid : MonoBehaviour {
 			}
 		}
 
-		if (triggeredSquare || toggleTriggerSquare) {
-			if (triggeredSquare && toggleTriggerSquare) {
-				toggleTriggerSquare.triggerSquare = triggeredSquare;
+		if (triggeredSquare1 || toggleTriggerSquare1) {
+			if (triggeredSquare1 && toggleTriggerSquare1) {
+				toggleTriggerSquare1.triggerSquare = triggeredSquare1;
 			} else {
-				Debug.Log ("Warning: There is a trigger square with no toggle square, or vice-versa");
+				Debug.Log ("Warning: Trigger square #1 has no toggle square #1, or vice-versa");
+			}
+		}
+
+		if (triggeredSquare2 || toggleTriggerSquare2) {
+			if (triggeredSquare2 && toggleTriggerSquare2) {
+				toggleTriggerSquare2.triggerSquare = triggeredSquare2;
+			} else {
+				Debug.Log ("Warning: Trigger square #2 has no toggle square #2, or vice-versa");
 			}
 		}
 

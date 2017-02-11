@@ -64,7 +64,7 @@ public class LevelManager : MonoBehaviour {
 
 			if (m_grid.IsValidGridPosition (oneSquareOver) && m_grid.Grid [oneSquareOver.x, oneSquareOver.y].IsLandableSquare ()) {
 				newPosition = oneSquareOver;
-			} else if (m_grid.IsValidGridPosition (twoSquaresOver) && m_grid.Grid [twoSquaresOver.x, twoSquaresOver.y].IsLandableSquare ()) {
+			} else if (m_grid.IsValidGridPosition (twoSquaresOver)) {
 				newPosition = twoSquaresOver;
 			}
 			else if (m_grid.IsValidGridPosition (oneSquareOver)) {
@@ -77,7 +77,7 @@ public class LevelManager : MonoBehaviour {
 
 			if (m_grid.IsValidGridPosition (oneSquareOver) && m_grid.Grid [oneSquareOver.x, oneSquareOver.y].IsLandableSquare ()) {
 				newPosition = oneSquareOver;
-			} else if (m_grid.IsValidGridPosition (twoSquaresOver) && m_grid.Grid [twoSquaresOver.x, twoSquaresOver.y].IsLandableSquare ()) {
+			} else if (m_grid.IsValidGridPosition (twoSquaresOver)) {
 				newPosition = twoSquaresOver;
 			}
 			else if (m_grid.IsValidGridPosition (oneSquareOver)) {
@@ -90,7 +90,7 @@ public class LevelManager : MonoBehaviour {
 
 			if (m_grid.IsValidGridPosition (oneSquareOver) && m_grid.Grid [oneSquareOver.x, oneSquareOver.y].IsLandableSquare ()) {
 				newPosition = oneSquareOver;
-			} else if (m_grid.IsValidGridPosition (twoSquaresOver) && m_grid.Grid [twoSquaresOver.x, twoSquaresOver.y].IsLandableSquare ()) {
+			} else if (m_grid.IsValidGridPosition (twoSquaresOver)) {
 				newPosition = twoSquaresOver;
 			}
 			else if (m_grid.IsValidGridPosition (oneSquareOver)) {
