@@ -7,6 +7,8 @@ using System.Text.RegularExpressions;
 public class LevelDefinition { 
 	public char[][] levelGrid;
 
+    public LevelDefinition() { }
+
 	public LevelDefinition(char[][] levelGrid) {
 		this.levelGrid = levelGrid;
 	}
@@ -127,31 +129,7 @@ public class LevelManager : MonoBehaviour {
 
 	void LoadLevels(string levelFilename) {
 		Debug.Log ("Loading levels from '" + levelFilename + "'");
-
-		List<char[]> levelData = new List<char[]>();
-
-		Regex endLevelPattern = new Regex(@"^###");
-		Regex commentPattern = new Regex(@"^#");
-		TextAsset levelText = Resources.Load<TextAsset> (levelFilename);
-		if (!levelText) {
-			Debug.LogError ("Error: Unable to load level from '" + levelFilename + "': Resource doesn't exist");
-		}
-		string rawLevelString = levelText.text;
-		string[] rows = rawLevelString.Split(new string[] {System.Environment.NewLine}, System.StringSplitOptions.RemoveEmptyEntries);
-		for (int i = 0; i < rows.Length; ++i) {
-			string row = rows [i];
-			if (endLevelPattern.IsMatch (row)) {
-				m_levels.Add (new LevelDefinition (levelData.ToArray ()));
-				levelData = new List<char[]> ();
-			}
-			else if (commentPattern.IsMatch (row)) {
-				// Do nothing.
-			} else {
-				char[] levelRow = row.ToCharArray();
-				levelData.Insert(0, levelRow);
-			}
-		}
-
+        m_levels = LevelReadWrite.ReadLevelDefinitions(levelFilename);
 		Debug.Log ("Loaded " + m_levels.Count + " levels");
 	}
 
@@ -159,7 +137,7 @@ public class LevelManager : MonoBehaviour {
 		if (levelIndex >= 0 && m_levels.Count > levelIndex) {
 			m_activeLevel = levelIndex;
 			m_grid.InitializeGrid (m_levels[levelIndex].levelGrid, emptyPlatformSquarePrefab, solidPlatformSquarePrefab, winPlatformSquarePrefab, toggleTriggerPlatformSquare, triggeredPlatformSquare, m_player);
-			Debug.Log ("Loaded level " + levelIndex);
+			Debug.Log ("Set level " + levelIndex);
 		}
 	}
 }
