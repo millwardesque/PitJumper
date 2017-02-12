@@ -49,33 +49,25 @@ public class LevelGrid : MonoBehaviour {
 		for (int x = 0; x < gridWidth; ++x) {
 			for (int y = 0; y < gridHeight; ++y) {
 				if (levelData [y][x] == 'e') {
-					m_grid [x, y] = Instantiate<WinPlatformSquare> (winPrefab, this.transform);
-					m_grid [x, y].InitializeSquareData (winSquareData);
+					ReplaceSquare (winPrefab, winSquareData, x, y);
 				} else if (levelData [y][x] == '-') {
-					m_grid [x, y] = Instantiate<EmptyPlatformSquare> (emptyPrefab, this.transform);
-					m_grid [x, y].InitializeSquareData (emptySquareData);
+					ReplaceSquare (emptyPrefab, emptySquareData, x, y);
 				} else if (levelData [y][x] == 'o') {
-					m_grid [x, y] = Instantiate<SolidPlatformSquare> (solidPrefab, this.transform);
-					m_grid [x, y].InitializeSquareData (solidPlatformData);
+					ReplaceSquare (solidPrefab, solidPlatformData, x, y);
 				} else if (levelData [y][x] == 's') {
 					playerStart = new GridCoord (x, y);
-					m_grid [x, y] = Instantiate<SolidPlatformSquare> (solidPrefab, this.transform);
-					m_grid [x, y].InitializeSquareData (solidPlatformData);
+					ReplaceSquare (solidPrefab, solidPlatformData, x, y);
 				} else if (levelData [y][x] == 'T') {
-					m_grid [x, y] = Instantiate<ToggleTriggerPlatformSquare> (toggleTriggerPlatformSquare, this.transform);
-					m_grid [x, y].InitializeSquareData (toggleTriggerSquareData);
+					ReplaceSquare (toggleTriggerPlatformSquare, toggleTriggerSquareData, x, y);
 					toggleTriggerSquare1 = m_grid [x, y] as ToggleTriggerPlatformSquare;
 				} else if (levelData [y][x] == 't') {
-					m_grid [x, y] = Instantiate<TriggeredPlatformSquare> (triggeredPlatformSquare, this.transform);
-					m_grid [x, y].InitializeSquareData (triggeredSquareData);
+					ReplaceSquare (triggeredPlatformSquare, triggeredSquareData, x, y);
 					triggeredSquare1 = m_grid [x, y] as TriggeredPlatformSquare;
 				} else if (levelData [y][x] == 'U') {
-					m_grid [x, y] = Instantiate<ToggleTriggerPlatformSquare> (toggleTriggerPlatformSquare, this.transform);
-					m_grid [x, y].InitializeSquareData (toggleTriggerSquareData);
+					ReplaceSquare (toggleTriggerPlatformSquare, toggleTriggerSquareData, x, y);
 					toggleTriggerSquare2 = m_grid [x, y] as ToggleTriggerPlatformSquare;
 				} else if (levelData [y][x] == 'u') {
-					m_grid [x, y] = Instantiate<TriggeredPlatformSquare> (triggeredPlatformSquare, this.transform);
-					m_grid [x, y].InitializeSquareData (triggeredSquareData);
+					ReplaceSquare (triggeredPlatformSquare, triggeredSquareData, x, y);
 					triggeredSquare2 = m_grid [x, y] as TriggeredPlatformSquare;
 				}
 				else {
@@ -83,10 +75,6 @@ public class LevelGrid : MonoBehaviour {
 					Destroy (m_grid [x, y]);
 					continue;
 				}
-
-				m_grid [x, y].name = "Grid (" + x + ", " + y + ")";
-				m_grid [x, y].Grid = this;
-				m_grid [x, y].GridPosition = new GridCoord (x, y);
 			}
 		}
 
@@ -108,6 +96,18 @@ public class LevelGrid : MonoBehaviour {
 
 		player.Grid = this;
 		player.CurrentPosition = playerStart;
+	}
+
+	public void ReplaceSquare(PlatformSquare prefab, PlatformSquareData squareData, int x, int y) {
+		if (m_grid [x, y] != null) {
+			Destroy (m_grid [x, y].gameObject);
+		}
+
+		m_grid [x, y] = Instantiate<PlatformSquare> (prefab, this.transform);
+		m_grid [x, y].InitializeSquareData (squareData);
+		m_grid [x, y].name = "Grid (" + x + ", " + y + ")";
+		m_grid [x, y].Grid = this;
+		m_grid [x, y].GridPosition = new GridCoord (x, y);
 	}
 
 	public Vector2 GetCoordInWorldSpace(GridCoord coords) {
