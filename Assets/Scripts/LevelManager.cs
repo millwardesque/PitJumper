@@ -137,7 +137,7 @@ public class LevelManager : MonoBehaviour {
 			Debug.LogError ("Error: Unable to load level from '" + levelFilename + "': Resource doesn't exist");
 		}
 		string rawLevelString = levelText.text;
-		string[] rows = rawLevelString.Split(new string[]{"\n"}, System.StringSplitOptions.RemoveEmptyEntries);
+		string[] rows = rawLevelString.Split(new string[] {System.Environment.NewLine}, System.StringSplitOptions.RemoveEmptyEntries);
 		for (int i = 0; i < rows.Length; ++i) {
 			string row = rows [i];
 			if (endLevelPattern.IsMatch (row)) {
