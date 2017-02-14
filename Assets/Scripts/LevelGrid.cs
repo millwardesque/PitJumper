@@ -27,7 +27,7 @@ public class LevelGrid : MonoBehaviour {
 		get { return m_grid; }
 	}
 
-	public void InitializeGrid(char[][] levelData, EmptyPlatformSquare emptyPrefab, SolidPlatformSquare solidPrefab, WinPlatformSquare winPrefab, ToggleTriggerPlatformSquare toggleTriggerPlatformSquare, TriggeredPlatformSquare triggeredPlatformSquare, Player player) {
+	public void InitializeGrid(char[][] levelData, EmptyPlatformSquare emptyPrefab, SolidPlatformSquare solidPrefab, WinPlatformSquare winPrefab, ToggleTriggerPlatformSquare toggleTriggerPlatformSquare, TriggeredPlatformSquare triggeredPlatformSquare, DisappearingSquare disappearingSquare, Player player) {
 		int gridWidth = levelData[0].Length;
 		int gridHeight = levelData.Length;
 
@@ -36,6 +36,7 @@ public class LevelGrid : MonoBehaviour {
 		PlatformSquareData winSquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Win Platform Prototype");
 		PlatformSquareData toggleTriggerSquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Toggle Trigger Prototype");
 		PlatformSquareData triggeredSquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Triggered Platform Prototype");
+		PlatformSquareData disappearingSquareData = Resources.Load<PlatformSquareData>("Platform Squares/Disappearing Square Prototype");
 
 		DeleteGrid ();
 
@@ -54,6 +55,8 @@ public class LevelGrid : MonoBehaviour {
 					ReplaceSquare (emptyPrefab, emptySquareData, x, y);
 				} else if (levelData [y][x] == 'o') {
 					ReplaceSquare (solidPrefab, solidPlatformData, x, y);
+				} else if (levelData [y][x] == 'd') {
+					ReplaceSquare (disappearingSquare, disappearingSquareData, x, y);
 				} else if (levelData [y][x] == 's') {
 					playerStart = new GridCoord (x, y);
 					ReplaceSquare (solidPrefab, solidPlatformData, x, y);
@@ -131,8 +134,6 @@ public class LevelGrid : MonoBehaviour {
 		LevelDefinition level = new LevelDefinition ();
 		char[][] levelData = new char[m_grid.GetLength (1)][];
 
-		int triggerCount = 0;
-		int toggleCount = 0;
 		for (int y = 0; y < m_grid.GetLength(1); ++y) {
 			levelData[y] = new char [m_grid.GetLength(0)];
 			for (int x = 0; x < m_grid.GetLength(0); ++x) {
@@ -141,6 +142,9 @@ public class LevelGrid : MonoBehaviour {
 				}
 				else if (m_grid[x, y] is SolidPlatformSquare) {
 					levelData [y] [x] = 'o';
+				}
+				else if (m_grid[x, y] is DisappearingSquare) {
+					levelData [y] [x] = 'd';
 				}
 				else if (m_grid[x, y] is WinPlatformSquare) {
 					levelData [y] [x] = 'e';

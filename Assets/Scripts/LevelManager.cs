@@ -33,6 +33,7 @@ public class LevelManager : MonoBehaviour {
 	public WinPlatformSquare winPlatformSquarePrefab;
 	public ToggleTriggerPlatformSquare toggleTriggerPlatformSquare;
 	public TriggeredPlatformSquare triggeredPlatformSquare;
+	public DisappearingSquare disappearingSquare;
 
 	public string levelFilename;
 
@@ -125,10 +126,11 @@ public class LevelManager : MonoBehaviour {
 					SetLevel (m_activeLevel + 1);
 				}
 			}
-			else if (!m_grid.Grid [newPosition.x, newPosition.y].CanPlayerLandHereNow ()) {
-				Debug.Log ("You Died!");
-				SetLevel (m_activeLevel);
-			}
+		}
+
+		if (!m_grid.Grid [m_player.CurrentPosition.x, m_player.CurrentPosition.y].CanPlayerLandHereNow ()) {
+			Debug.Log ("You Died!");
+			SetLevel (m_activeLevel);
 		}
 
 		if (Input.GetKeyDown (KeyCode.LeftBracket)) {
@@ -148,7 +150,7 @@ public class LevelManager : MonoBehaviour {
 	void SetLevel(int levelIndex) {
 		if (levelIndex >= 0 && m_levels.Count > levelIndex) {
 			m_activeLevel = levelIndex;
-			m_grid.InitializeGrid (m_levels[levelIndex].levelGrid, emptyPlatformSquarePrefab, solidPlatformSquarePrefab, winPlatformSquarePrefab, toggleTriggerPlatformSquare, triggeredPlatformSquare, m_player);
+			m_grid.InitializeGrid (m_levels[levelIndex].levelGrid, emptyPlatformSquarePrefab, solidPlatformSquarePrefab, winPlatformSquarePrefab, toggleTriggerPlatformSquare, triggeredPlatformSquare, disappearingSquare, m_player);
 			Debug.Log ("Set level " + levelIndex);
 		}
 	}
