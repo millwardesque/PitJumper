@@ -1,35 +1,35 @@
-eo
--d
--o
---
-os
---
+e d
+- d
+- o
+- -
+o s
+- -
 ###
---o-o-o-
--o-s-o-o
---o-o-o-
---e---oo
+- - o - o - o -
+- o - s - o - o
+- - o - o - o -
+- - e - - - o o
 ###
-o-ooo-o-
--o-o-o-o
-o-o-o-o-
--o-o-o-o
-o-o-o-o-
--o-o-o-o
-o-s-o-o-
--e-o-o-o
+o - o o o - o -
+- o - o - o - o
+o - o - o - o -
+- o - o - o - o
+o - o - o - o -
+- o - o - o - o
+o - s - o - o -
+- e - o - o - o
 ###
-et-
----
--oT
----
--s-
----
+e t -
+- - -
+- o T
+- - -
+- s -
+- - -
 ###
-o-o-o-oo
--s-o-o-U
-o-o-o---
---u----o
----o-o--
-e-t----T
+o - o - o - o o
+- s - o - o - U
+o - o - o - - -
+- - u - - - - o
+- - - o - o - -
+e - t - - - - T
 ###

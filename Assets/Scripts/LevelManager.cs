@@ -5,11 +5,11 @@ using UnityEngine.SceneManagement;
 using System.Text.RegularExpressions;
 
 public class LevelDefinition { 
-	public char[][] levelGrid;
+	public string[][] levelGrid;
 
     public LevelDefinition() { }
 
-	public LevelDefinition(char[][] levelGrid) {
+	public LevelDefinition(string[][] levelGrid) {
 		this.levelGrid = levelGrid;
 	}
 
@@ -17,7 +17,7 @@ public class LevelDefinition {
 		string level = "";
 		for (int y = levelGrid.Length - 1; y >= 0; y--) {
 			for (int x = 0; x < levelGrid [y].Length; x++) {
-				level += levelGrid [y] [x];
+				level += levelGrid [y] [x] + (x < levelGrid[y].Length - 1 ? " " : "") ;
 			}
 
 			level += "\n";

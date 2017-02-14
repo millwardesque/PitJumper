@@ -7,7 +7,7 @@ public static class LevelReadWrite {
     public static List<LevelDefinition> ReadLevelDefinitions(string levelFilename) {
         List<LevelDefinition> levels = new List<LevelDefinition>();
 
-        List<char[]> levelData = new List<char[]>();
+        List<string[]> levelData = new List<string[]>();
 
         Regex endLevelPattern = new Regex(@"^###");
         Regex commentPattern = new Regex(@"^#");
@@ -22,28 +22,17 @@ public static class LevelReadWrite {
             string row = rows[i];
             if (endLevelPattern.IsMatch(row)) {
                 levels.Add(new LevelDefinition(levelData.ToArray()));
-                levelData = new List<char[]>();
+                levelData = new List<string[]>();
             }
             else if (commentPattern.IsMatch(row)) {
                 // Do nothing.
             }
             else {
-                char[] levelRow = row.ToCharArray();
+				string[] levelRow = row.Split (new string[] { " " }, System.StringSplitOptions.RemoveEmptyEntries);
                 levelData.Insert(0, levelRow);
             }
         }
 
         return levels;
-    }
-
-    public static void WriteLevelDefinition(string levelFilename, LevelDefinition level, int levelIndex) {
-        string taggedFilename = levelFilename + "?tag=Level" + levelIndex;
-        ES2.Save<LevelDefinition>(level, taggedFilename);
-    }
-
-    public static void WriteAllLevelDefinitions(string levelFilename, List<LevelDefinition> levels) {
-        for (int i = 0; i < levels.Count; ++i) {
-            ES2.Save<LevelDefinition>(levels[i], levelFilename + "?tag=Level" + i);
-        }
     }
 }
