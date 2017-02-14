@@ -12,6 +12,18 @@ public class LevelDefinition {
 	public LevelDefinition(char[][] levelGrid) {
 		this.levelGrid = levelGrid;
 	}
+
+	public override string ToString() {
+		string level = "";
+		for (int y = levelGrid.Length - 1; y >= 0; y--) {
+			for (int x = 0; x < levelGrid [y].Length; x++) {
+				level += levelGrid [y] [x];
+			}
+
+			level += "\n";
+		}
+		return level;
+	}
 }
 
 public class LevelManager : MonoBehaviour {

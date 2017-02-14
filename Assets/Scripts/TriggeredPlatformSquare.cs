@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TriggeredPlatformSquare : PlatformSquare {
 	bool m_isTriggered = false;
+	public ToggleTriggerPlatformSquare toggleSquare = null;
 
 	void Start() {
 		GetComponent<SpriteRenderer> ().enabled = false;

@@ -81,6 +81,7 @@ public class LevelGrid : MonoBehaviour {
 		if (triggeredSquare1 || toggleTriggerSquare1) {
 			if (triggeredSquare1 && toggleTriggerSquare1) {
 				toggleTriggerSquare1.triggerSquare = triggeredSquare1;
+				triggeredSquare1.toggleSquare = toggleTriggerSquare1;
 			} else {
 				Debug.Log ("Warning: Trigger square #1 has no toggle square #1, or vice-versa");
 			}
@@ -89,6 +90,7 @@ public class LevelGrid : MonoBehaviour {
 		if (triggeredSquare2 || toggleTriggerSquare2) {
 			if (triggeredSquare2 && toggleTriggerSquare2) {
 				toggleTriggerSquare2.triggerSquare = triggeredSquare2;
+				triggeredSquare2.toggleSquare = toggleTriggerSquare2;
 			} else {
 				Debug.Log ("Warning: Trigger square #2 has no toggle square #2, or vice-versa");
 			}
@@ -123,5 +125,58 @@ public class LevelGrid : MonoBehaviour {
 		for (int i = 0; i < squares.Length; ++i) {
 			GameObject.Destroy (squares[i].gameObject);
 		}
+	}
+
+	public LevelDefinition AsLevelDefinition() {
+		LevelDefinition level = new LevelDefinition ();
+		char[][] levelData = new char[m_grid.GetLength (1)][];
+
+		int triggerCount = 0;
+		int toggleCount = 0;
+		for (int y = 0; y < m_grid.GetLength(1); ++y) {
+			levelData[y] = new char [m_grid.GetLength(0)];
+			for (int x = 0; x < m_grid.GetLength(0); ++x) {
+				if (m_grid[x, y] is EmptyPlatformSquare) {
+					levelData [y] [x] = '-';
+				}
+				else if (m_grid[x, y] is SolidPlatformSquare) {
+					levelData [y] [x] = 'o';
+				}
+				else if (m_grid[x, y] is WinPlatformSquare) {
+					levelData [y] [x] = 'e';
+				}
+				else if (m_grid[x, y] is ToggleTriggerPlatformSquare) {
+					if (levelData [y] [x] == 0) {
+
+						char triggerChar = 'T';
+						char toggleChar = 't';
+						levelData [y] [x] = triggerChar;
+						ToggleTriggerPlatformSquare toggleSquare = m_grid [x, y] as ToggleTriggerPlatformSquare;
+						if (toggleSquare.triggerSquare != null) {
+							levelData [toggleSquare.triggerSquare.GridPosition.y] [toggleSquare.triggerSquare.GridPosition.x] = toggleChar;
+						}
+					}
+				}
+				else if (m_grid[x, y] is TriggeredPlatformSquare) {
+					if (levelData [y] [x] == 0) {
+
+						char triggerChar = 'T';
+						char toggleChar = 't';
+
+						levelData [y] [x] = toggleChar;
+						TriggeredPlatformSquare square = m_grid [x, y] as TriggeredPlatformSquare;
+						if (square.toggleSquare != null) {
+							levelData [square.toggleSquare.GridPosition.y] [square.toggleSquare.GridPosition.x] = triggerChar;
+						}
+					}
+				}
+				else {
+					Debug.Log (string.Format ("Unknown grid square type '{0}' at ({1}, {2})", m_grid[x, y].GetType(), x, y));
+				}
+			}
+		}
+		level.levelGrid = levelData;
+
+		return level;
 	}
 }
