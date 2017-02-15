@@ -100,7 +100,7 @@ public class LevelGrid : MonoBehaviour {
 		}
 
 		player.Grid = this;
-		player.CurrentPosition = playerStart;
+		player.TransportToCoord(playerStart);
 	}
 
 	public void ReplaceSquare(PlatformSquare prefab, PlatformSquareData squareData, int x, int y) {

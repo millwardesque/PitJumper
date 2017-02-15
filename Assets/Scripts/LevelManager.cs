@@ -114,16 +114,18 @@ public class LevelManager : MonoBehaviour {
 		}
 
 		if (newPosition != m_player.CurrentPosition && m_grid.IsValidGridPosition(newPosition)) {
-			m_player.CurrentPosition = newPosition;
-			m_grid.Grid [newPosition.x, newPosition.y].OnPlayerLandsHere (m_player);
+			if (m_player.MoveToCoord (newPosition)) {
+				// @TODO Call all this after the player arrives at a square.
+				m_grid.Grid [newPosition.x, newPosition.y].OnPlayerLandsHere (m_player);
 
-			if (m_grid.Grid [newPosition.x, newPosition.y] is WinPlatformSquare) {
-				Debug.Log ("You Win!");
-				if (m_activeLevel == m_levels.Count - 1) {
-					Debug.Log ("Wow, you beat the whole game!");
-					SetLevel (0);
-				} else {
-					SetLevel (m_activeLevel + 1);
+				if (m_grid.Grid [newPosition.x, newPosition.y] is WinPlatformSquare) {
+					Debug.Log ("You Win!");
+					if (m_activeLevel == m_levels.Count - 1) {
+						Debug.Log ("Wow, you beat the whole game!");
+						SetLevel (0);
+					} else {
+						SetLevel (m_activeLevel + 1);
+					}
 				}
 			}
 		}
@@ -150,6 +152,7 @@ public class LevelManager : MonoBehaviour {
 	void SetLevel(int levelIndex) {
 		if (levelIndex >= 0 && m_levels.Count > levelIndex) {
 			m_activeLevel = levelIndex;
+			m_player.Reset ();
 			m_grid.InitializeGrid (m_levels[levelIndex].levelGrid, emptyPlatformSquarePrefab, solidPlatformSquarePrefab, winPlatformSquarePrefab, toggleTriggerPlatformSquare, triggeredPlatformSquare, disappearingSquare, m_player);
 			Debug.Log ("Set level " + levelIndex);
 		}
