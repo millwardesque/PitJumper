@@ -10,4 +10,18 @@ public class WinPlatformSquare : PlatformSquare {
 	public override bool IsLandableSquare() {
 		return true;
 	}
+
+	public override void OnPlayerLandsHere(Player player) {
+		Debug.Log ("You Win!");
+
+		LevelManager levelManager = FindObjectOfType <LevelManager> ();
+		if (levelManager != null) {
+			if (levelManager.ActiveLevel == levelManager.Levels.Count - 1) {
+				Debug.Log ("Wow, you beat the whole game!");
+				levelManager.ActiveLevel = 0;
+			} else {
+				levelManager.ActiveLevel++;
+			}
+		}
+	}
 }

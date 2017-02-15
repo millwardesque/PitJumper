@@ -50,6 +50,7 @@ public class MovingPlayerState : PlayerState {
 
 		if (m_elapsed >= m_duration) {
 			m_player.PopState ();
+			m_player.Grid.Grid [m_player.CurrentPosition.x, m_player.CurrentPosition.y].OnPlayerLandsHere (m_player);
 		}
 	}
 }

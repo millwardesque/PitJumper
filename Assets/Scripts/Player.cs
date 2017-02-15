@@ -26,10 +26,12 @@ public class Player : MonoBehaviour {
 
 	void Awake() {
 		m_state = new Stack<PlayerState> ();
+		Debug.Log ("Awake");
 	}
 
 	void Start() {
-		PushState (new IdlePlayerState (this));
+		Debug.Log ("Start");
+		Reset ();
 	}
 
 	void Update() {
@@ -56,6 +58,8 @@ public class Player : MonoBehaviour {
 		if (m_state.Peek() != null) {
 			m_state.Peek().Enter ();
 		}
+
+		Debug.Log ("Post-push Size: " + m_state.Count);
 	}
 
 	public void SetState(PlayerState state) {
@@ -69,6 +73,8 @@ public class Player : MonoBehaviour {
 		if (m_state.Peek() != null) {
 			m_state.Peek().Enter ();
 		}
+
+		Debug.Log ("Post-set Size: " + m_state.Count);
 	}
 
 	public PlayerState PopState() {
@@ -90,6 +96,8 @@ public class Player : MonoBehaviour {
 		if (m_state.Count > 0 && m_state.Peek() != null) {
 			m_state.Peek().Enter ();
 		}
+
+		Debug.Log ("Post-pop Size: " + m_state.Count);
 
 		return oldState;
 	}
@@ -114,7 +122,8 @@ public class Player : MonoBehaviour {
 		}
 	}
 
-	public void Reset() {	
+	public void Reset() {
+		Debug.Log ("Reset");
 		while (m_state.Count > 0) {
 			m_state.Peek ().Exit ();
 			m_state.Pop ();
@@ -122,5 +131,7 @@ public class Player : MonoBehaviour {
 
 		m_state.Push (new IdlePlayerState(this));
 		m_state.Peek ().Enter ();
+
+		Debug.Log ("Post-reset Size: " + m_state.Count);
 	}
 }

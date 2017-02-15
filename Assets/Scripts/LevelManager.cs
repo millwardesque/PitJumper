@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Text.RegularExpressions;
 
 public class LevelDefinition { 
@@ -38,7 +37,23 @@ public class LevelManager : MonoBehaviour {
 	public string levelFilename;
 
 	int m_activeLevel = -1;
+	public int ActiveLevel {
+		get { return m_activeLevel; }
+		set {
+			if (value >= 0 && m_levels.Count > value) {
+				m_activeLevel = value;
+				m_player.Reset ();
+				m_grid.InitializeGrid (m_levels[value].levelGrid, emptyPlatformSquarePrefab, solidPlatformSquarePrefab, winPlatformSquarePrefab, toggleTriggerPlatformSquare, triggeredPlatformSquare, disappearingSquare, m_player);
+				Debug.Log ("Set level " + value);
+			}
+		}
+	}
+
 	List<LevelDefinition> m_levels;
+	public List<LevelDefinition> Levels {
+		get { return m_levels; }
+	}
+
 	LevelGrid m_grid;
 	Player m_player;
 
@@ -54,7 +69,7 @@ public class LevelManager : MonoBehaviour {
 		m_grid = FindObjectOfType<LevelGrid> ();
 		LoadLevels (levelFilename);
 
-		SetLevel (0);
+		ActiveLevel = 0;
 	}
 	
 	// Update is called once per frame
@@ -114,32 +129,19 @@ public class LevelManager : MonoBehaviour {
 		}
 
 		if (newPosition != m_player.CurrentPosition && m_grid.IsValidGridPosition(newPosition)) {
-			if (m_player.MoveToCoord (newPosition)) {
-				// @TODO Call all this after the player arrives at a square.
-				m_grid.Grid [newPosition.x, newPosition.y].OnPlayerLandsHere (m_player);
-
-				if (m_grid.Grid [newPosition.x, newPosition.y] is WinPlatformSquare) {
-					Debug.Log ("You Win!");
-					if (m_activeLevel == m_levels.Count - 1) {
-						Debug.Log ("Wow, you beat the whole game!");
-						SetLevel (0);
-					} else {
-						SetLevel (m_activeLevel + 1);
-					}
-				}
-			}
+			m_player.MoveToCoord (newPosition);
 		}
 
 		if (!m_grid.Grid [m_player.CurrentPosition.x, m_player.CurrentPosition.y].CanPlayerLandHereNow ()) {
 			Debug.Log ("You Died!");
-			SetLevel (m_activeLevel);
+			ActiveLevel = ActiveLevel; // Restart the level.
 		}
 
 		if (Input.GetKeyDown (KeyCode.LeftBracket)) {
-			SetLevel (m_activeLevel - 1);
+			ActiveLevel--;
 		}
 		else if (Input.GetKeyDown (KeyCode.RightBracket)) {
-			SetLevel (m_activeLevel + 1);
+			ActiveLevel++;
 		}
 	}
 
@@ -147,14 +149,5 @@ public class LevelManager : MonoBehaviour {
 		Debug.Log ("Loading levels from '" + levelFilename + "'");
         m_levels = LevelReadWrite.ReadLevelDefinitions(levelFilename);
 		Debug.Log ("Loaded " + m_levels.Count + " levels");
-	}
-
-	void SetLevel(int levelIndex) {
-		if (levelIndex >= 0 && m_levels.Count > levelIndex) {
-			m_activeLevel = levelIndex;
-			m_player.Reset ();
-			m_grid.InitializeGrid (m_levels[levelIndex].levelGrid, emptyPlatformSquarePrefab, solidPlatformSquarePrefab, winPlatformSquarePrefab, toggleTriggerPlatformSquare, triggeredPlatformSquare, disappearingSquare, m_player);
-			Debug.Log ("Set level " + levelIndex);
-		}
 	}
 }
