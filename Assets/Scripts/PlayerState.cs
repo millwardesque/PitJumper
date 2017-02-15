@@ -23,9 +23,10 @@ public class MovingPlayerState : PlayerState {
 	Vector2 m_start;
 	Vector2 m_movement;
 	float m_elapsed;
+	float m_duration;
 
 	Vector2 m_end;
-	public Vector2 End {
+	Vector2 End {
 		get { return m_end; }
 		set {
 			m_start = m_player.transform.position;
@@ -35,27 +36,20 @@ public class MovingPlayerState : PlayerState {
 		}
 	}
 
-	float m_duration;
-	public float Duration {
-		get { return m_duration; }
-		set {
-			m_duration = value;
-			m_elapsed = 0f;
-		}
-	}
-
-	public MovingPlayerState(Player player, Vector2 destination, float duration) : base(player) {
+	public MovingPlayerState(Player player, Vector2 destination) : base(player) {
 		End = destination;
-		Duration = duration;
+		m_duration = player.secondsPerSquareMovement * m_movement.magnitude;
 	}
 
 	public override void FixedUpdate() {
 		m_elapsed += Time.deltaTime;
+		m_elapsed = Mathf.Clamp (m_elapsed, 0, m_duration);
+
+		Vector2 position = m_start + (m_elapsed / m_duration) * m_movement;
+		m_player.transform.position = position;
+
 		if (m_elapsed >= m_duration) {
 			m_player.PopState ();
-		} else {
-			Vector2 position = m_start + (m_elapsed / m_duration) * m_movement;
-			m_player.transform.position = position;
 		}
 	}
 }

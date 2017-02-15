@@ -22,6 +22,8 @@ public class Player : MonoBehaviour {
 		get { return m_currentPosition; }
 	}
 
+	public float secondsPerSquareMovement = 0.25f;
+
 	void Awake() {
 		m_state = new Stack<PlayerState> ();
 	}
@@ -104,7 +106,7 @@ public class Player : MonoBehaviour {
 	public bool MoveToCoord(GridCoord location) {
 		if (CanMove ()) {
 			Vector2 destination = m_grid.GetCoordInWorldSpace (location);
-			PushState (new MovingPlayerState (this, destination, 0.5f));
+			PushState (new MovingPlayerState (this, destination));
 			m_currentPosition = location;
 			return true;
 		} else {
