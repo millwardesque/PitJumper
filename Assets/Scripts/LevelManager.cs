@@ -33,6 +33,7 @@ public class LevelManager : MonoBehaviour {
 	public ToggleTriggerPlatformSquare toggleTriggerPlatformSquare;
 	public TriggeredPlatformSquare triggeredPlatformSquare;
 	public DisappearingSquare disappearingSquare;
+	public WarpSquare warpSquare;
 
 	public string levelFilename;
 
@@ -43,7 +44,7 @@ public class LevelManager : MonoBehaviour {
 			if (value >= 0 && m_levels.Count > value) {
 				m_activeLevel = value;
 				m_player.Reset ();
-				m_grid.InitializeGrid (m_levels[value].levelGrid, emptyPlatformSquarePrefab, solidPlatformSquarePrefab, winPlatformSquarePrefab, toggleTriggerPlatformSquare, triggeredPlatformSquare, disappearingSquare, m_player);
+				m_grid.InitializeGrid (m_levels[value].levelGrid, emptyPlatformSquarePrefab, solidPlatformSquarePrefab, winPlatformSquarePrefab, toggleTriggerPlatformSquare, triggeredPlatformSquare, disappearingSquare, warpSquare, m_player);
 			}
 		}
 	}
@@ -128,7 +129,7 @@ public class LevelManager : MonoBehaviour {
 		}
 
 		if (newPosition != m_player.CurrentPosition && m_grid.IsValidGridPosition(newPosition)) {
-			m_player.MoveToCoord (newPosition);
+			m_player.MoveToCoord (newPosition, true);
 		}
 
 		if (!m_grid.Grid [m_player.CurrentPosition.x, m_player.CurrentPosition.y].CanPlayerLandHereNow ()) {

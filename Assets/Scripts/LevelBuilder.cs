@@ -11,6 +11,7 @@ public class LevelBuilder : MonoBehaviour {
 	public ToggleTriggerPlatformSquare toggleTriggerPlatformSquare;
 	public TriggeredPlatformSquare triggeredPlatformSquare;
 	public DisappearingSquare disappearingSquare;
+	public WarpSquare warpSquare;
 
 	List<PlatformSquare> m_squareTypes;
 	List<PlatformSquareData> m_squareData;
@@ -29,6 +30,7 @@ public class LevelBuilder : MonoBehaviour {
 		m_squareTypes.Add (toggleTriggerPlatformSquare);
 		m_squareTypes.Add (triggeredPlatformSquare);
 		m_squareTypes.Add (disappearingSquare);
+		m_squareTypes.Add (warpSquare);
 
 		PlatformSquareData emptySquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Empty Square Prototype");
 		PlatformSquareData solidPlatformData = Resources.Load<PlatformSquareData> ("Platform Squares/Solid Platform Prototype");
@@ -36,6 +38,7 @@ public class LevelBuilder : MonoBehaviour {
 		PlatformSquareData toggleTriggerSquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Toggle Trigger Prototype");
 		PlatformSquareData triggeredSquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Triggered Platform Prototype");
 		PlatformSquareData disappearingSquareData = Resources.Load<PlatformSquareData>("Platform Squares/Disappearing Square Prototype");
+		PlatformSquareData warpSquareData = Resources.Load<PlatformSquareData>("Platform Squares/Warp Square Prototype");
 
 		m_squareData = new List<PlatformSquareData> ();
 		m_squareData.Add (emptySquareData);
@@ -44,6 +47,7 @@ public class LevelBuilder : MonoBehaviour {
 		m_squareData.Add (toggleTriggerSquareData);
 		m_squareData.Add (triggeredSquareData);
 		m_squareData.Add (disappearingSquareData);
+		m_squareData.Add (warpSquareData);
 	}
 	
 	// Update is called once per frame

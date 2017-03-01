@@ -103,10 +103,16 @@ public class Player : MonoBehaviour {
 		return m_state.Count > 0 && !(m_state.Peek () is MovingPlayerState);
 	}
 
-	public bool MoveToCoord(GridCoord location) {
+	public bool MoveToCoord(GridCoord location, bool animate) {
 		if (CanMove ()) {
 			Vector2 destination = m_grid.GetCoordInWorldSpace (location);
-			PushState (new MovingPlayerState (this, destination));
+
+			if (animate) {
+				PushState (new MovingPlayerState (this, destination)); 
+			} else {
+				transform.position = destination;
+			}
+
 			m_currentPosition = location;
 			return true;
 		} else {

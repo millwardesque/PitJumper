@@ -28,7 +28,7 @@ public class LevelGrid : MonoBehaviour {
 		get { return m_grid; }
 	}
 
-	public void InitializeGrid(string[][] levelData, EmptyPlatformSquare emptyPrefab, SolidPlatformSquare solidPrefab, WinPlatformSquare winPrefab, ToggleTriggerPlatformSquare toggleTriggerPlatformSquare, TriggeredPlatformSquare triggeredPlatformSquare, DisappearingSquare disappearingSquare, Player player) {
+	public void InitializeGrid(string[][] levelData, EmptyPlatformSquare emptyPrefab, SolidPlatformSquare solidPrefab, WinPlatformSquare winPrefab, ToggleTriggerPlatformSquare toggleTriggerPlatformSquare, TriggeredPlatformSquare triggeredPlatformSquare, DisappearingSquare disappearingSquare, WarpSquare warpSquare, Player player) {
 		int gridWidth = levelData[0].Length;
 		int gridHeight = levelData.Length;
 
@@ -38,6 +38,7 @@ public class LevelGrid : MonoBehaviour {
 		PlatformSquareData toggleTriggerSquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Toggle Trigger Prototype");
 		PlatformSquareData triggeredSquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Triggered Platform Prototype");
 		PlatformSquareData disappearingSquareData = Resources.Load<PlatformSquareData>("Platform Squares/Disappearing Square Prototype");
+		PlatformSquareData warpSquareData = Resources.Load<PlatformSquareData>("Platform Squares/Warp Square Prototype");
 
 		DeleteGrid ();
 
@@ -48,7 +49,8 @@ public class LevelGrid : MonoBehaviour {
 
 		Dictionary<string, ToggleTriggerPlatformSquare> toggleTriggerSquares = new Dictionary<string, ToggleTriggerPlatformSquare> ();
 		Dictionary<string, TriggeredPlatformSquare> triggeredSquares = new Dictionary<string, TriggeredPlatformSquare> ();
-
+		Dictionary<string, WarpSquare> warpSquares1 = new Dictionary<string, WarpSquare> ();
+		Dictionary<string, WarpSquare> warpSquares2 = new Dictionary<string, WarpSquare> ();
 		for (int x = 0; x < gridWidth; ++x) {
 			for (int y = 0; y < gridHeight; ++y) {
 				Match match = elementPattern.Match (levelData [y] [x]);
@@ -75,6 +77,12 @@ public class LevelGrid : MonoBehaviour {
 				} else if (tileType == "t") {
 					ReplaceSquare (triggeredPlatformSquare, triggeredSquareData, x, y);
 					triggeredSquares[tileAttributes] = m_grid [x, y] as TriggeredPlatformSquare;
+				} else if (tileType == "W") {
+					ReplaceSquare (warpSquare, warpSquareData, x, y);
+					warpSquares1[tileAttributes] = m_grid [x, y] as WarpSquare;
+				} else if (tileType == "w") {
+					ReplaceSquare (warpSquare, warpSquareData, x, y);
+					warpSquares2[tileAttributes] = m_grid [x, y] as WarpSquare;
 				}
 				else {
 					Debug.Log (string.Format ("Unknown grid square type '{0}' at ({1}, {2})", tileType, x, y));
@@ -90,6 +98,15 @@ public class LevelGrid : MonoBehaviour {
 				triggeredSquares[key].toggleSquare = toggleTriggerSquares[key];
 			} else {
 				Debug.Log ("Warning: Trigger square #" + key + " has no toggle square, or vice-versa");
+			}
+		}
+
+		foreach (string key in warpSquares1.Keys) {
+			if (warpSquares1[key] && warpSquares2[key]) {
+				warpSquares1[key].destination = warpSquares2[key];
+				warpSquares2[key].destination = warpSquares1[key];
+			} else {
+				Debug.Log ("Warning: Warp square #" + key + " has no endpoint square, or vice-versa");
 			}
 		}
 
