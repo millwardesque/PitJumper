@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public struct GridCoord {
@@ -40,62 +41,55 @@ public class LevelGrid : MonoBehaviour {
 
 		DeleteGrid ();
 
+		Regex elementPattern = new Regex(@"^([a-zA-Z0-9\-]+)(\[(.+)\])?");
+
 		GridCoord playerStart = new GridCoord(0, 0);
 		m_grid = new PlatformSquare[gridWidth, gridHeight];
-		ToggleTriggerPlatformSquare toggleTriggerSquare1 = null;
-		TriggeredPlatformSquare triggeredSquare1 = null;
 
-		ToggleTriggerPlatformSquare toggleTriggerSquare2 = null;
-		TriggeredPlatformSquare triggeredSquare2 = null;
+		Dictionary<string, ToggleTriggerPlatformSquare> toggleTriggerSquares = new Dictionary<string, ToggleTriggerPlatformSquare> ();
+		Dictionary<string, TriggeredPlatformSquare> triggeredSquares = new Dictionary<string, TriggeredPlatformSquare> ();
+
 		for (int x = 0; x < gridWidth; ++x) {
 			for (int y = 0; y < gridHeight; ++y) {
-				if (levelData [y][x] == "e") {
+				Match match = elementPattern.Match (levelData [y] [x]);
+				if (!match.Success) {
+					continue;
+				}
+
+				string tileType = match.Groups [1].Value;
+				string tileAttributes = (match.Groups.Count == 4 ? match.Groups [3].Value : "");
+				if (tileType == "e") {
 					ReplaceSquare (winPrefab, winSquareData, x, y);
-				} else if (levelData [y][x] == "-") {
+				} else if (tileType == "-") {
 					ReplaceSquare (emptyPrefab, emptySquareData, x, y);
-				} else if (levelData [y][x] == "o") {
+				} else if (tileType == "o") {
 					ReplaceSquare (solidPrefab, solidPlatformData, x, y);
-				} else if (levelData [y][x] == "d") {
+				} else if (tileType == "d") {
 					ReplaceSquare (disappearingSquare, disappearingSquareData, x, y);
-				} else if (levelData [y][x] == "s") {
+				} else if (tileType == "s") {
 					playerStart = new GridCoord (x, y);
 					ReplaceSquare (solidPrefab, solidPlatformData, x, y);
-				} else if (levelData [y][x] == "T") {
+				} else if (tileType == "T") {
 					ReplaceSquare (toggleTriggerPlatformSquare, toggleTriggerSquareData, x, y);
-					toggleTriggerSquare1 = m_grid [x, y] as ToggleTriggerPlatformSquare;
-				} else if (levelData [y][x] == "t") {
+					toggleTriggerSquares[tileAttributes] = m_grid [x, y] as ToggleTriggerPlatformSquare;
+				} else if (tileType == "t") {
 					ReplaceSquare (triggeredPlatformSquare, triggeredSquareData, x, y);
-					triggeredSquare1 = m_grid [x, y] as TriggeredPlatformSquare;
-				} else if (levelData [y][x] == "U") {
-					ReplaceSquare (toggleTriggerPlatformSquare, toggleTriggerSquareData, x, y);
-					toggleTriggerSquare2 = m_grid [x, y] as ToggleTriggerPlatformSquare;
-				} else if (levelData [y][x] == "u") {
-					ReplaceSquare (triggeredPlatformSquare, triggeredSquareData, x, y);
-					triggeredSquare2 = m_grid [x, y] as TriggeredPlatformSquare;
+					triggeredSquares[tileAttributes] = m_grid [x, y] as TriggeredPlatformSquare;
 				}
 				else {
-					Debug.Log (string.Format ("Unknown grid square type '{0}' at ({1}, {2})", levelData [x][y], x, y));
+					Debug.Log (string.Format ("Unknown grid square type '{0}' at ({1}, {2})", tileType, x, y));
 					Destroy (m_grid [x, y]);
 					continue;
 				}
 			}
 		}
 
-		if (triggeredSquare1 || toggleTriggerSquare1) {
-			if (triggeredSquare1 && toggleTriggerSquare1) {
-				toggleTriggerSquare1.triggerSquare = triggeredSquare1;
-				triggeredSquare1.toggleSquare = toggleTriggerSquare1;
+		foreach (string key in toggleTriggerSquares.Keys) {
+			if (triggeredSquares[key] && toggleTriggerSquares[key]) {
+				toggleTriggerSquares[key].triggerSquare = triggeredSquares[key];
+				triggeredSquares[key].toggleSquare = toggleTriggerSquares[key];
 			} else {
-				Debug.Log ("Warning: Trigger square #1 has no toggle square #1, or vice-versa");
-			}
-		}
-
-		if (triggeredSquare2 || toggleTriggerSquare2) {
-			if (triggeredSquare2 && toggleTriggerSquare2) {
-				toggleTriggerSquare2.triggerSquare = triggeredSquare2;
-				triggeredSquare2.toggleSquare = toggleTriggerSquare2;
-			} else {
-				Debug.Log ("Warning: Trigger square #2 has no toggle square #2, or vice-versa");
+				Debug.Log ("Warning: Trigger square #" + key + " has no toggle square, or vice-versa");
 			}
 		}
 

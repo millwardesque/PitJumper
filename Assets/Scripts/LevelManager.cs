@@ -44,7 +44,6 @@ public class LevelManager : MonoBehaviour {
 				m_activeLevel = value;
 				m_player.Reset ();
 				m_grid.InitializeGrid (m_levels[value].levelGrid, emptyPlatformSquarePrefab, solidPlatformSquarePrefab, winPlatformSquarePrefab, toggleTriggerPlatformSquare, triggeredPlatformSquare, disappearingSquare, m_player);
-				Debug.Log ("Set level " + value);
 			}
 		}
 	}

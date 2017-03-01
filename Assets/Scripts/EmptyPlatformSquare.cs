@@ -10,4 +10,13 @@ public class EmptyPlatformSquare : PlatformSquare {
 	public override bool IsLandableSquare() {
 		return false;
 	}
+
+	public override void OnPlayerLandsHere(Player player) {
+		Debug.Log ("You Died!");
+
+		LevelManager levelManager = FindObjectOfType <LevelManager> ();
+		if (levelManager != null) {
+			levelManager.ActiveLevel = levelManager.ActiveLevel; // Restart the level.
+		}
+	}
 }
