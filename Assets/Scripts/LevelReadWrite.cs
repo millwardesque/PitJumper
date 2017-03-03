@@ -28,6 +28,8 @@ public static class LevelReadWrite {
                 // Do nothing.
             }
             else {
+				Regex whitespacePattern = new Regex(@"\s+");
+				row = whitespacePattern.Replace (row, " ");
 				string[] levelRow = row.Split (new string[] { " " }, System.StringSplitOptions.RemoveEmptyEntries);
                 levelData.Insert(0, levelRow);
             }

@@ -42,7 +42,7 @@ public class LevelGrid : MonoBehaviour {
 
 		DeleteGrid ();
 
-		Regex elementPattern = new Regex(@"^([a-zA-Z0-9\-]+)(\[(.+)\])?");
+		Regex elementPattern = new Regex(@"^\s*([a-zA-Z0-9\-]+)(\[(.+)\])?");
 
 		GridCoord playerStart = new GridCoord(0, 0);
 		m_grid = new PlatformSquare[gridWidth, gridHeight];
@@ -59,7 +59,8 @@ public class LevelGrid : MonoBehaviour {
 				}
 
 				string tileType = match.Groups [1].Value;
-				string tileAttributes = (match.Groups.Count == 4 ? match.Groups [3].Value : "");
+				Dictionary<string, string> attributes = (match.Groups.Count == 4 ? ExtractTileAttributes(match.Groups [3].Value) : null);
+
 				if (tileType == "e") {
 					ReplaceSquare (winPrefab, winSquareData, x, y);
 				} else if (tileType == "-") {
@@ -73,16 +74,48 @@ public class LevelGrid : MonoBehaviour {
 					ReplaceSquare (solidPrefab, solidPlatformData, x, y);
 				} else if (tileType == "T") {
 					ReplaceSquare (toggleTriggerPlatformSquare, toggleTriggerSquareData, x, y);
-					toggleTriggerSquares[tileAttributes] = m_grid [x, y] as ToggleTriggerPlatformSquare;
+
+					bool isOneWay = attributes.ContainsKey ("oneway") && attributes ["oneway"].ToLower () == "y";
+					(m_grid [x, y] as ToggleTriggerPlatformSquare).oneWayToggle = isOneWay;
+
+					string triggerID = attributes.ContainsKey("id") ? attributes["id"] : "";
+					if (triggerID != "") {
+						toggleTriggerSquares[triggerID] = m_grid [x, y] as ToggleTriggerPlatformSquare;
+					}
+					else {
+						Debug.LogWarning("Error loading toggle-trigger square: No trigger ID was supplied");
+					}
 				} else if (tileType == "t") {
 					ReplaceSquare (triggeredPlatformSquare, triggeredSquareData, x, y);
-					triggeredSquares[tileAttributes] = m_grid [x, y] as TriggeredPlatformSquare;
+
+					string triggerID = attributes.ContainsKey("id") ? attributes["id"] : "";
+					if (triggerID != "") {
+						triggeredSquares[triggerID] = m_grid [x, y] as TriggeredPlatformSquare;
+					}
+					else {
+						Debug.LogWarning("Error loading triggerable square: No trigger index was supplied");
+					}
+
 				} else if (tileType == "W") {
 					ReplaceSquare (warpSquare, warpSquareData, x, y);
-					warpSquares1[tileAttributes] = m_grid [x, y] as WarpSquare;
+
+					string warpID = attributes.ContainsKey("id") ? attributes["id"] : "";
+					if (warpID != "") {
+						warpSquares1[warpID] = m_grid [x, y] as WarpSquare;
+					}
+					else {
+						Debug.LogWarning("Error loading warp square: No warp ID was supplied");
+					}
 				} else if (tileType == "w") {
 					ReplaceSquare (warpSquare, warpSquareData, x, y);
-					warpSquares2[tileAttributes] = m_grid [x, y] as WarpSquare;
+
+					string warpID = attributes.ContainsKey("id") ? attributes["id"] : "";
+					if (warpID != "") {
+						warpSquares2[warpID] = m_grid [x, y] as WarpSquare;
+					}
+					else {
+						Debug.LogWarning("Error loading warp square: No warp ID was supplied");
+					}
 				}
 				else {
 					Debug.Log (string.Format ("Unknown grid square type '{0}' at ({1}, {2})", tileType, x, y));
@@ -132,6 +165,26 @@ public class LevelGrid : MonoBehaviour {
 
 	public bool IsValidGridPosition(GridCoord coords) {
 		return (coords.x >= 0 && coords.x < m_grid.GetLength (0) && coords.y >= 0 && coords.y < m_grid.GetLength (1));
+	}
+
+	Dictionary<string, string> ExtractTileAttributes(string attributeString) {
+		if (attributeString == "") {
+			return null;
+		}
+	
+		string[] tileAttributes = attributeString.Split(',');
+		Dictionary<string, string> attributes = new Dictionary<string, string> ();
+
+		foreach (string attr in tileAttributes) {
+			string[] attrData = attr.Split ('=');
+			if (attrData != null && attrData.Length == 2) {
+				attributes [attrData [0]] = attrData [1];
+			} else {
+				Debug.LogWarning ("Unsupported string attribute: '" + attr + "' from string '" + attributeString + "'");
+			}
+		}
+
+		return attributes;
 	}
 
 	void DeleteGrid() {

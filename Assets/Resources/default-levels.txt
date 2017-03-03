@@ -5,10 +5,10 @@ e o
 o s
 - -
 ###
-- -    W[1] - o - o -
-- -    -    s - o - o
-- -    o    - o - o -
-e w[1] -    - - - o o
+- -       W[id=1] - o - o -
+- -       -    	  s - o - o
+- -    	  o    	  - o - o -
+e w[id=1] -    	  - - - o o
 ###
 o - o o o - o -
 - o - o - o - o
@@ -19,17 +19,17 @@ o - o - o - o -
 o - s - o - o -
 - e - o - o - o
 ###
-e t[1] -
-- -    -
-- o    T[1]
-- -    -
-- s    -
-- -    -
+e t[id=1] -
+- -    	  -
+- o    	  T[id=1,oneway=y]
+- -    	  -
+- s    	  -
+- -    	  -
 ###
 o - o - o - o o
-- s - o - o - T[2]
+- s - o - o - T[id=2,oneway=y]
 o - o - o - - -
-- - t[2] - - - - o
+- - t[id=2] - - - - o
 - - - o - o - -
-e - t[1] - - - - T[1]
+e - t[id=1] - - - - T[id=1,oneway=y]
 ###
