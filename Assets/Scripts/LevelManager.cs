@@ -8,6 +8,7 @@ public class LevelDefinition {
 	public string name;
 	public Color backgroundColour;
 	public Color ambientLightColour;
+	public float playerLightSize;
 
     public LevelDefinition() { }
 
@@ -50,6 +51,7 @@ public class LevelManager : MonoBehaviour {
 				m_grid.InitializeGrid (m_levels[value].levelGrid, emptyPlatformSquarePrefab, solidPlatformSquarePrefab, winPlatformSquarePrefab, toggleTriggerPlatformSquare, triggeredPlatformSquare, disappearingSquare, warpSquare, m_player);
 				RenderSettings.ambientLight = m_levels [value].ambientLightColour;
 				Camera.main.backgroundColor = m_levels [value].backgroundColour;
+				m_player.GetComponentInChildren<Light> ().range = m_levels [value].playerLightSize;
 			}
 		}
 	}

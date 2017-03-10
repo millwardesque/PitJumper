@@ -1,7 +1,7 @@
 [meta]
-name: "Level 1"
 backgroundColour: 0 0 0 1
 ambientLightColour: 0 0 0 1
+playerLightSize: 6.0
 [tiles]
 e o
 - -
@@ -10,6 +10,10 @@ e o
 o s
 - -
 ###
+[meta]
+backgroundColour: 0 0 0 1
+ambientLightColour: 0.1 0 0 1
+playerLightSize: 2.0
 [tiles]
 - -       W[id=1] - o - o -
 - -       -    	  s - o - o

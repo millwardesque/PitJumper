@@ -11,6 +11,7 @@ public static class LevelReadWrite {
 		string levelName = "<unnamed level>";
 		Color levelAmbientColour = Color.cyan;
 		Color levelBackgroundColour = Color.cyan;
+		float playerLightSize = 1.0f;
 
         Regex endLevelPattern = new Regex(@"^###");
         Regex commentPattern = new Regex(@"^#");
@@ -33,6 +34,7 @@ public static class LevelReadWrite {
 				level.name = levelName;
 				level.ambientLightColour = levelAmbientColour;
 				level.backgroundColour = levelBackgroundColour;
+				level.playerLightSize = playerLightSize;
 				levels.Add (level);
 
 				// Reset the file data variables.
@@ -41,6 +43,7 @@ public static class LevelReadWrite {
 				levelName = "<unnamed level>";
 				levelAmbientColour = Color.cyan;
 				levelBackgroundColour = Color.cyan;
+				playerLightSize = 1.0f;
 			} else if (commentPattern.IsMatch (row)) {
 				// Do nothing.
 			} else if (metaBlockPattern.IsMatch (row)) {
@@ -68,6 +71,9 @@ public static class LevelReadWrite {
 					case "backgroundColour":
 						string[] backgroundComponents = metaRow [1].Split (new string[] { " " }, System.StringSplitOptions.RemoveEmptyEntries);
 						levelBackgroundColour = new Color (float.Parse(backgroundComponents [0]), float.Parse(backgroundComponents [1]), float.Parse(backgroundComponents [2]), float.Parse(backgroundComponents [3]));
+						break;
+					case "playerLightSize":
+						playerLightSize = float.Parse (metaRow [1]);
 						break;
 					default:
 						Debug.Log ("Unknown meta configuration directive: '" + row + "'");
