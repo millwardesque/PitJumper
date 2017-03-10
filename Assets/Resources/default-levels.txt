@@ -1,3 +1,8 @@
+[meta]
+name: "Level 1"
+backgroundColour: 0 0 0 1
+ambientLightColour: 0 0 0 1
+[tiles]
 e o
 - -
 - o
@@ -5,11 +10,13 @@ e o
 o s
 - -
 ###
+[tiles]
 - -       W[id=1] - o - o -
 - -       -    	  s - o - o
 - -    	  o    	  - o - o -
 e w[id=1] -    	  - - - o o
 ###
+[tiles]
 o - o o o - o -
 - o - o - o - o
 o - o - o - o -
@@ -19,6 +26,7 @@ o - o - o - o -
 o - s - o - o -
 - e - o - o - o
 ###
+[tiles]
 e t[id=1] -
 - -    	  -
 - o    	  T[id=1,oneway=y]
@@ -26,6 +34,7 @@ e t[id=1] -
 - s    	  -
 - -    	  -
 ###
+[tiles]
 o - o - o - o o
 - s - o - o - T[id=2,oneway=y]
 o - o - o - - -

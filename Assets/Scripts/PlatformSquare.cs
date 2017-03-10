@@ -29,4 +29,7 @@ public abstract class PlatformSquare : MonoBehaviour {
 	public abstract bool IsLandableSquare();
 
 	public virtual void OnPlayerLandsHere(Player player) { }
+
+	public virtual void OnAddToLevel(LevelGrid grid, GridCoord position) { }
+	public virtual void OnRemoveFromLevel(LevelGrid grid, GridCoord position) { }
 }

@@ -19,4 +19,15 @@ public class WarpSquare : PlatformSquare {
 			player.MoveToCoord (destination.GridPosition, false);
 		}
 	}
+
+	public override void OnAddToLevel(LevelGrid grid, GridCoord position) {
+		// @TODO Search for unlinked trigger and link.
+	}
+
+	public override void OnRemoveFromLevel(LevelGrid grid, GridCoord position) {
+		// Unlink from other tile.
+		if (destination != null) {
+			destination.destination = null;
+		}
+	}
 }

@@ -63,7 +63,6 @@ public class LevelBuilder : MonoBehaviour {
 					} else {
 						int nextIndex = (typeIndex + 1 < m_squareTypes.Count ? typeIndex + 1 : 0);
 						m_grid.ReplaceSquare (m_squareTypes [nextIndex], m_squareData [nextIndex], square.GridPosition.x, square.GridPosition.y);
-
 						Debug.Log (m_grid.AsLevelDefinition ().ToString ());
 					}
 				}

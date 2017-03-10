@@ -8,10 +8,17 @@ public static class LevelReadWrite {
         List<LevelDefinition> levels = new List<LevelDefinition>();
 
         List<string[]> levelData = new List<string[]>();
+		string levelName = "<unnamed level>";
+		Color levelAmbientColour = Color.cyan;
+		Color levelBackgroundColour = Color.cyan;
 
         Regex endLevelPattern = new Regex(@"^###");
         Regex commentPattern = new Regex(@"^#");
+		Regex metaBlockPattern = new Regex (@"^\[meta\]");
+		Regex tilesBlockPattern = new Regex (@"^\[tiles\]");
         TextAsset levelText = Resources.Load<TextAsset>(levelFilename);
+
+		string section = "";
         if (!levelText) {
             Debug.LogError("Error: Unable to load level from '" + levelFilename + "': Resource doesn't exist");
             return levels;
@@ -20,19 +27,54 @@ public static class LevelReadWrite {
         string[] rows = rawLevelString.Split(new string[] { System.Environment.NewLine }, System.StringSplitOptions.RemoveEmptyEntries);
         for (int i = 0; i < rows.Length; ++i) {
             string row = rows[i];
-            if (endLevelPattern.IsMatch(row)) {
-                levels.Add(new LevelDefinition(levelData.ToArray()));
-                levelData = new List<string[]>();
-            }
-            else if (commentPattern.IsMatch(row)) {
-                // Do nothing.
-            }
+			if (endLevelPattern.IsMatch (row)) {
+				// Create the new level definition based on the collected data.
+				LevelDefinition level = new LevelDefinition (levelData.ToArray ());
+				level.name = levelName;
+				level.ambientLightColour = levelAmbientColour;
+				level.backgroundColour = levelBackgroundColour;
+				levels.Add (level);
+
+				// Reset the file data variables.
+				section = "";
+				levelData = new List<string[]> ();
+				levelName = "<unnamed level>";
+				levelAmbientColour = Color.cyan;
+				levelBackgroundColour = Color.cyan;
+			} else if (commentPattern.IsMatch (row)) {
+				// Do nothing.
+			} else if (metaBlockPattern.IsMatch (row)) {
+				section = "meta";
+			} else if (tilesBlockPattern.IsMatch (row)) {
+				section = "tiles";
+			}
             else {
 				Regex whitespacePattern = new Regex(@"\s+");
 				row = whitespacePattern.Replace (row, " ");
-				string[] levelRow = row.Split (new string[] { " " }, System.StringSplitOptions.RemoveEmptyEntries);
-                levelData.Insert(0, levelRow);
-            }
+
+				if (section == "tiles") {
+					string[] levelRow = row.Split (new string[] { " " }, System.StringSplitOptions.RemoveEmptyEntries);
+					levelData.Insert (0, levelRow);
+				} else if (section == "meta") {
+					string[] metaRow = row.Split (new string[] { ":" }, System.StringSplitOptions.RemoveEmptyEntries);
+					switch (metaRow [0]) {
+					case "name":
+						levelName = metaRow [1];
+						break;
+					case "ambientLightColour":
+						string[] ambientComponents = metaRow [1].Split (new string[] { " " }, System.StringSplitOptions.RemoveEmptyEntries);
+						levelAmbientColour = new Color (float.Parse(ambientComponents [0]), float.Parse(ambientComponents [1]), float.Parse(ambientComponents [2]), float.Parse(ambientComponents [3]));
+						break;
+					case "backgroundColour":
+						string[] backgroundComponents = metaRow [1].Split (new string[] { " " }, System.StringSplitOptions.RemoveEmptyEntries);
+						levelBackgroundColour = new Color (float.Parse(backgroundComponents [0]), float.Parse(backgroundComponents [1]), float.Parse(backgroundComponents [2]), float.Parse(backgroundComponents [3]));
+						break;
+					default:
+						Debug.Log ("Unknown meta configuration directive: '" + row + "'");
+						break;
+					}
+				}
+			}
         }
 
         return levels;

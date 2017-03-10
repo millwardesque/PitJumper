@@ -5,6 +5,9 @@ using System.Text.RegularExpressions;
 
 public class LevelDefinition { 
 	public string[][] levelGrid;
+	public string name;
+	public Color backgroundColour;
+	public Color ambientLightColour;
 
     public LevelDefinition() { }
 
@@ -45,6 +48,8 @@ public class LevelManager : MonoBehaviour {
 				m_activeLevel = value;
 				m_player.Reset ();
 				m_grid.InitializeGrid (m_levels[value].levelGrid, emptyPlatformSquarePrefab, solidPlatformSquarePrefab, winPlatformSquarePrefab, toggleTriggerPlatformSquare, triggeredPlatformSquare, disappearingSquare, warpSquare, m_player);
+				RenderSettings.ambientLight = m_levels [value].ambientLightColour;
+				Camera.main.backgroundColor = m_levels [value].backgroundColour;
 			}
 		}
 	}
