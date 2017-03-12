@@ -33,11 +33,15 @@ public class Player : MonoBehaviour {
 	}
 
 	void Update() {
-		m_state.Peek().Update ();
+        if (m_state != null) {
+            m_state.Peek().Update();
+        }		
 	}
 
 	void FixedUpdate() {
-		m_state.Peek().FixedUpdate ();
+        if (m_state != null) {
+            m_state.Peek().FixedUpdate();
+        }
 	}
 
 	void SnapToGridPosition() {
