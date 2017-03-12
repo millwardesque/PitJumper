@@ -18,6 +18,26 @@ public struct GridCoord {
 	public static bool operator !=(GridCoord c1, GridCoord c2) {
 		return !(c1 == c2);
 	}
+
+	public override bool Equals(System.Object obj) {
+		if (obj == null) {
+			return false;
+		}
+
+		if (!(obj is GridCoord)) {
+			return false;
+		}
+		GridCoord coord = (GridCoord)obj;
+		return (this.x == coord.x && this.y == coord.y);
+	}
+
+	public bool Equals(GridCoord coord) {
+		return (this.x == coord.x && this.y == coord.y);
+	}
+
+	public override int GetHashCode() {
+		return x ^ y;
+	}
 }
 
 public class LevelGrid : MonoBehaviour {
