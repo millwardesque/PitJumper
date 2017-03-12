@@ -200,10 +200,12 @@ public class LevelGrid : MonoBehaviour {
 	public LevelDefinition AsLevelDefinition() {
 		LevelDefinition level = new LevelDefinition ();
 		string[][] levelData = new string[m_grid.GetLength (1)][];
+        for (int y = 0; y < m_grid.GetLength(1); ++y) {
+            levelData[y] = new string[m_grid.GetLength(0)];
+        }
 
 		int triggerID = 1;
 		for (int y = 0; y < m_grid.GetLength(1); ++y) {
-			levelData[y] = new string [m_grid.GetLength(0)];
 			for (int x = 0; x < m_grid.GetLength(0); ++x) {
 				if (m_grid[x, y] is EmptyPlatformSquare) {
 					levelData [y] [x] = "-";
@@ -219,13 +221,11 @@ public class LevelGrid : MonoBehaviour {
 				}
 				else if (m_grid[x, y] is ToggleTriggerPlatformSquare) {
 					if (string.IsNullOrEmpty(levelData[y][x])) {
-						Debug.Log ("Writing trigger #" + triggerID + "'" + levelData[y][x] + "'");
 						string triggerAttributes = "id=" + triggerID + ",oneway=" + ((m_grid [x, y] as ToggleTriggerPlatformSquare).oneWayToggle ? "y" : "n");
 						string triggerString = "T[" + triggerAttributes + "]";
 						levelData [y] [x] = triggerString;
 						ToggleTriggerPlatformSquare toggleSquare = m_grid [x, y] as ToggleTriggerPlatformSquare;
 						if (toggleSquare.triggerSquare != null && string.IsNullOrEmpty(levelData [toggleSquare.triggerSquare.GridPosition.y] [toggleSquare.triggerSquare.GridPosition.x])) {
-							Debug.Log ("Writing internal toggle #" + triggerID);
 							string toggleString = "t[id=" + triggerID + "]";
 							levelData [toggleSquare.triggerSquare.GridPosition.y] [toggleSquare.triggerSquare.GridPosition.x] = toggleString;
 						}
@@ -234,12 +234,10 @@ public class LevelGrid : MonoBehaviour {
 				}
 				else if (m_grid[x, y] is TriggeredPlatformSquare) {
 					if (string.IsNullOrEmpty(levelData[y][x])) {
-						Debug.Log ("Writing toggle #" + triggerID + "'" + levelData[y][x] + "'");
 						string toggleString = "t[id=" + triggerID + "]";
 						levelData [y] [x] = toggleString;
 						TriggeredPlatformSquare square = m_grid [x, y] as TriggeredPlatformSquare;
 						if (square.toggleSquare != null && string.IsNullOrEmpty(levelData [square.toggleSquare.GridPosition.y] [square.toggleSquare.GridPosition.x])) {
-							Debug.Log ("Writing internal trigger #" + triggerID);
 							string triggerAttributes = "id=" + triggerID + ",oneway=" + ((m_grid [square.toggleSquare.GridPosition.x, square.toggleSquare.GridPosition.y] as ToggleTriggerPlatformSquare).oneWayToggle ? "y" : "n");
 							string triggerString = "T[" + triggerAttributes + "]";
 							levelData [square.toggleSquare.GridPosition.y] [square.toggleSquare.GridPosition.x] = triggerString;

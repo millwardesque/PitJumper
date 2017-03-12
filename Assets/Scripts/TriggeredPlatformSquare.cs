@@ -29,8 +29,13 @@ public class TriggeredPlatformSquare : PlatformSquare {
 	}
 
 	public override void OnAddToLevel(LevelGrid grid, GridCoord position) {
-		// @TODO Search for unlinked trigger and link.
-	}
+        // Try to link to an unused toggle.
+        ToggleTriggerPlatformSquare toggle = FindUnusedToggleTriggerPlatformSquare(grid);
+        if (toggle != null) {
+            toggleSquare = toggle;
+            toggleSquare.triggerSquare = this;
+        }
+    }
 
 	public override void OnRemoveFromLevel(LevelGrid grid, GridCoord position) {
 		// Unlink from other tile.
@@ -38,4 +43,16 @@ public class TriggeredPlatformSquare : PlatformSquare {
 			toggleSquare.triggerSquare = null;
 		}
 	}
+
+    ToggleTriggerPlatformSquare FindUnusedToggleTriggerPlatformSquare(LevelGrid grid) {
+        for (int y = 0; y < grid.Grid.GetLength(1); ++y) {
+            for (int x = 0; x < grid.Grid.GetLength(0); ++x) {
+                if (grid.Grid[x, y] is ToggleTriggerPlatformSquare && (grid.Grid[x, y] as ToggleTriggerPlatformSquare).triggerSquare == null) {
+                    return grid.Grid[x, y] as ToggleTriggerPlatformSquare;
+                }
+            }
+        }
+
+        return null;
+    }
 }
