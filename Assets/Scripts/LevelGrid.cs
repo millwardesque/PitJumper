@@ -205,6 +205,7 @@ public class LevelGrid : MonoBehaviour {
         }
 
 		int triggerID = 1;
+        int warpID = 1;
 		for (int y = 0; y < m_grid.GetLength(1); ++y) {
 			for (int x = 0; x < m_grid.GetLength(0); ++x) {
 				if (m_grid[x, y] is EmptyPlatformSquare) {
@@ -245,7 +246,20 @@ public class LevelGrid : MonoBehaviour {
 						triggerID++;
 					}
 				}
-				else {
+                else if (m_grid[x, y] is WarpSquare) {
+                    if (string.IsNullOrEmpty(levelData[y][x])) {
+                        string attributes = "id=" + warpID;
+                        string warpString = "W[" + attributes + "]";
+                        levelData[y][x] = warpString;
+                        WarpSquare warpSquare = m_grid[x, y] as WarpSquare;
+                        if (warpSquare.destination != null && string.IsNullOrEmpty(levelData[warpSquare.destination.GridPosition.y][warpSquare.destination.GridPosition.x])) {
+                            string destinationString = "w[id=" + warpID + "]";
+                            levelData[warpSquare.destination.GridPosition.y][warpSquare.destination.GridPosition.x] = destinationString;
+                        }
+                        warpID++;
+                    }
+                }
+                else {
 					Debug.Log (string.Format ("Unknown grid square type '{0}' at ({1}, {2})", m_grid[x, y].GetType(), x, y));
 					continue;
 				}
