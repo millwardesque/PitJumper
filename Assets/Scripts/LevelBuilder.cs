@@ -66,7 +66,7 @@ public class LevelBuilder : MonoBehaviour {
 						Debug.Log ("Couldn't find matching prefab for clicked on square '" + square.name + "' with type '" + square.GetType ());
 					} else {
 						int nextIndex = (typeIndex + 1 < m_squareTypes.Count ? typeIndex + 1 : 0);
-						m_grid.ReplaceSquare (m_squareTypes [nextIndex], m_squareData [nextIndex], square.GridPosition.x, square.GridPosition.y);
+						m_grid.ReplaceSquare (m_squareTypes [nextIndex], m_squareData [nextIndex], square.GridPosition.x, square.GridPosition.y, new Dictionary<string, string>());
 						Debug.Log (m_grid.AsLevelDefinition ().ToString ());
 					}
 				}

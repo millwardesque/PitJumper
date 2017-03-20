@@ -42,6 +42,11 @@ public class ToggleTriggerPlatformSquare : PlatformSquare {
 		}
 	}
 
+	public override void InitializeFromStringAttributes(Dictionary<string, string> attributes) {
+		base.InitializeFromStringAttributes (attributes);
+		oneWayToggle = attributes.ContainsKey ("oneway") && attributes ["oneway"].ToLower () == "y";
+	}
+
 	TriggeredPlatformSquare FindUnusedTriggeredPlatformSquare(LevelGrid grid) {
 		for (int y = 0; y < grid.Grid.GetLength (1); ++y) {
 			for (int x = 0; x < grid.Grid.GetLength (0); ++x) {

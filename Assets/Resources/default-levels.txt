@@ -15,10 +15,10 @@ backgroundColour: 0 0 0 1
 ambientLightColour: 0.2 0 0 1
 playerLightSize: 4.0
 [tiles]
-- -       W[id=1] - o - o -
+- -       W[gid=1] - o - o -
 - -       -    	  s - o - o
 - -    	  o    	  - o - o -
-e w[id=1] -    	  - - - o o
+e w[gid=1] -    	  - - - o o
 ###
 [tiles]
 o - o o o - o -
@@ -31,18 +31,18 @@ o - s - o - o -
 - e - o - o - o
 ###
 [tiles]
-e t[id=1] -
+e t[gid=1] -
 - -    	  -
-- o    	  T[id=1,oneway=y]
+- o    	  T[gid=1,oneway=y]
 - -    	  -
 - s    	  -
 - -    	  -
 ###
 [tiles]
 o - o - o - o o
-- s - o - o - T[id=2,oneway=y]
+- s - o - o - T[gid=2,oneway=y]
 o - o - o - - -
-- - t[id=2] - - - - o
+- - t[gid=2] - - - - o
 - - - o - o - -
-e - t[id=1] - - - - T[id=1,oneway=y]
+e - t[gid=1] - - - - T[gid=1,oneway=y]
 ###

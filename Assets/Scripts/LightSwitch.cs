@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class LightSwitch : PlatformSquare
 {
@@ -24,5 +25,23 @@ public class LightSwitch : PlatformSquare
 			}
 		}
 	}
-}
 
+	public override void InitializeFromStringAttributes(Dictionary<string, string> attributes) {
+		base.InitializeFromStringAttributes (attributes);
+
+		oneWaySwitch = attributes.ContainsKey ("oneway") && attributes ["oneway"].ToLower () == "y";
+
+		string colorString = attributes.ContainsKey ("ambient") ? attributes ["ambient"] : "";
+		if (colorString != "") {
+			string[] components = colorString.Split (';');
+			if (components.Length >= 3) {
+				float r = float.Parse (components [0]);
+				float g = float.Parse (components [1]);
+				float b = float.Parse (components [2]);
+				ambient = new Color (r, g, b);
+			} else {
+				Debug.LogError ("LightSwitch color string '" + colorString + "' doesn't match 'r;g;b' format");
+			}
+		}
+	}
+}

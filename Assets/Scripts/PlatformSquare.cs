@@ -21,6 +21,11 @@ public abstract class PlatformSquare : MonoBehaviour {
 		}
 	}
 
+	string m_groupId;
+	public string GroupId {
+		get { return m_groupId; }
+	}
+
 	public void InitializeSquareData(PlatformSquareData data) {
 		this.GetComponent<SpriteRenderer> ().sprite = data.sprite;
 	}
@@ -32,4 +37,8 @@ public abstract class PlatformSquare : MonoBehaviour {
 
 	public virtual void OnAddToLevel(LevelGrid grid, GridCoord position) { }
 	public virtual void OnRemoveFromLevel(LevelGrid grid, GridCoord position) { }
+
+	public virtual void InitializeFromStringAttributes(Dictionary<string, string> attributes) {
+		m_groupId = attributes.ContainsKey ("gid") ? attributes ["gid"].ToLower() : "";
+	}
 }

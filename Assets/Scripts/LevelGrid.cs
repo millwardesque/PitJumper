@@ -80,86 +80,67 @@ public class LevelGrid : MonoBehaviour {
 				}
 
 				string tileType = match.Groups [1].Value;
-				Dictionary<string, string> attributes = (match.Groups.Count == 4 ? ExtractTileAttributes(match.Groups [3].Value) : null);
+				Dictionary<string, string> attributes = (match.Groups.Count == 4 ? ExtractTileAttributes(match.Groups [3].Value) : new Dictionary<string, string>());
 
 				if (tileType == "e") {
-					ReplaceSquare (winPrefab, winSquareData, x, y);
+					ReplaceSquare (winPrefab, winSquareData, x, y, attributes);
 				} else if (tileType == "-") {
-					ReplaceSquare (emptyPrefab, emptySquareData, x, y);
+					ReplaceSquare (emptyPrefab, emptySquareData, x, y, attributes);
 				} else if (tileType == "o") {
-					ReplaceSquare (solidPrefab, solidPlatformData, x, y);
+					ReplaceSquare (solidPrefab, solidPlatformData, x, y, attributes);
 				} else if (tileType == "d") {
-					ReplaceSquare (disappearingSquare, disappearingSquareData, x, y);
+					ReplaceSquare (disappearingSquare, disappearingSquareData, x, y, attributes);
 				} else if (tileType == "s") {
 					playerStart = new GridCoord (x, y);
-					ReplaceSquare (solidPrefab, solidPlatformData, x, y);
+					ReplaceSquare (solidPrefab, solidPlatformData, x, y, attributes);
 				} else if (tileType == "L") {
-					ReplaceSquare (lightSwitchSquare, lightSwitchData, x, y);
-
-					bool isOneWay = attributes.ContainsKey ("oneway") && attributes ["oneway"].ToLower () == "y";
-					(m_grid [x, y] as LightSwitch).oneWaySwitch = isOneWay;
-
-					string colorString = attributes.ContainsKey ("ambient") ? attributes ["ambient"] : "";
-					if (colorString != "") {
-						string[] components = colorString.Split (';');
-						if (components.Length >= 3) {
-							float r = float.Parse (components [0]);
-							float g = float.Parse (components [1]);
-							float b = float.Parse (components [2]);
-							(m_grid [x, y] as LightSwitch).ambient = new Color (r, g, b);
-						} else {
-							Debug.LogError ("LightSwitch color string '" + colorString + "' doesn't match 'r;g;b' format");
-						}
-					}
+					ReplaceSquare (lightSwitchSquare, lightSwitchData, x, y, attributes);
 				} else if (tileType == "T") {
-					ReplaceSquare (toggleTriggerPlatformSquare, toggleTriggerSquareData, x, y);
+					ReplaceSquare (toggleTriggerPlatformSquare, toggleTriggerSquareData, x, y, attributes);
 
-					bool isOneWay = attributes.ContainsKey ("oneway") && attributes ["oneway"].ToLower () == "y";
-					(m_grid [x, y] as ToggleTriggerPlatformSquare).oneWayToggle = isOneWay;
-
-					string triggerID = attributes.ContainsKey("id") ? attributes["id"] : "";
-					if (triggerID != "") {
-						toggleTriggerSquares[triggerID] = m_grid [x, y] as ToggleTriggerPlatformSquare;
+					if (m_grid[x, y].GroupId != "") {
+						toggleTriggerSquares[ m_grid[x, y].GroupId ] = m_grid [x, y] as ToggleTriggerPlatformSquare;
 					}
 					else {
-						Debug.LogWarning("Error loading toggle-trigger square: No trigger ID was supplied");
+						Debug.LogWarning("Error loading toggle-trigger square: No Group ID was supplied");
 					}
 				} else if (tileType == "t") {
-					ReplaceSquare (triggeredPlatformSquare, triggeredSquareData, x, y);
+					ReplaceSquare (triggeredPlatformSquare, triggeredSquareData, x, y, attributes);
 
-					string triggerID = attributes.ContainsKey("id") ? attributes["id"] : "";
-					if (triggerID != "") {
-						triggeredSquares[triggerID] = m_grid [x, y] as TriggeredPlatformSquare;
+					if (m_grid[x, y].GroupId != "") {
+						triggeredSquares[ m_grid[x, y].GroupId ] = m_grid [x, y] as TriggeredPlatformSquare;
 					}
 					else {
-						Debug.LogWarning("Error loading triggerable square: No trigger index was supplied");
+						Debug.LogWarning("Error loading triggerable square: No Group ID was supplied");
 					}
 
 				} else if (tileType == "W") {
-					ReplaceSquare (warpSquare, warpSquareData, x, y);
+					ReplaceSquare (warpSquare, warpSquareData, x, y, attributes);
 
-					string warpID = attributes.ContainsKey("id") ? attributes["id"] : "";
-					if (warpID != "") {
-						warpSquares1[warpID] = m_grid [x, y] as WarpSquare;
+					if (m_grid[x, y].GroupId != "") {
+						warpSquares1[ m_grid[x, y].GroupId ] = m_grid [x, y] as WarpSquare;
 					}
 					else {
-						Debug.LogWarning("Error loading warp square: No warp ID was supplied");
+						Debug.LogWarning("Error loading warp square: No Group ID was supplied");
 					}
 				} else if (tileType == "w") {
-					ReplaceSquare (warpSquare, warpSquareData, x, y);
+					ReplaceSquare (warpSquare, warpSquareData, x, y, attributes);
 
-					string warpID = attributes.ContainsKey("id") ? attributes["id"] : "";
-					if (warpID != "") {
-						warpSquares2[warpID] = m_grid [x, y] as WarpSquare;
+					if (m_grid[x, y].GroupId != "") {
+						warpSquares2[ m_grid[x, y].GroupId ] = m_grid [x, y] as WarpSquare;
 					}
 					else {
-						Debug.LogWarning("Error loading warp square: No warp ID was supplied");
+						Debug.LogWarning("Error loading warp square: No Group ID was supplied");
 					}
 				}
 				else {
 					Debug.Log (string.Format ("Unknown grid square type '{0}' at ({1}, {2})", tileType, x, y));
 					Destroy (m_grid [x, y]);
 					continue;
+				}
+
+				if (m_grid [x, y] != null) {
+					m_grid [x, y].InitializeFromStringAttributes (attributes);
 				}
 			}
 		}
@@ -186,7 +167,7 @@ public class LevelGrid : MonoBehaviour {
 		player.TransportToCoord(playerStart);
 	}
 
-	public void ReplaceSquare(PlatformSquare prefab, PlatformSquareData squareData, int x, int y) {
+	public void ReplaceSquare(PlatformSquare prefab, PlatformSquareData squareData, int x, int y, Dictionary<string, string> attributes) {
 		if (m_grid [x, y] != null) {
 			m_grid [x, y].OnRemoveFromLevel (this, new GridCoord(x, y));
 			Destroy (m_grid [x, y].gameObject);
@@ -197,6 +178,7 @@ public class LevelGrid : MonoBehaviour {
 		m_grid [x, y].name = "Grid (" + x + ", " + y + ")";
 		m_grid [x, y].Grid = this;
 		m_grid [x, y].GridPosition = new GridCoord (x, y);
+		m_grid [x, y].InitializeFromStringAttributes (attributes);
 
 		m_grid [x, y].OnAddToLevel (this, new GridCoord (x, y));
 	}
@@ -210,13 +192,12 @@ public class LevelGrid : MonoBehaviour {
 	}
 
 	Dictionary<string, string> ExtractTileAttributes(string attributeString) {
+		Dictionary<string, string> attributes = new Dictionary<string, string> ();
 		if (attributeString == "") {
-			return null;
+			return attributes;
 		}
 	
 		string[] tileAttributes = attributeString.Split(',');
-		Dictionary<string, string> attributes = new Dictionary<string, string> ();
-
 		foreach (string attr in tileAttributes) {
 			string[] attrData = attr.Split ('=');
 			if (attrData != null && attrData.Length == 2) {
