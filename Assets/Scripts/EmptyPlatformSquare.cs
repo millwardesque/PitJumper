@@ -19,4 +19,8 @@ public class EmptyPlatformSquare : PlatformSquare {
 			levelManager.ActiveLevel = levelManager.ActiveLevel; // Restart the level.
 		}
 	}
+
+	public override string PlatformTypeString () {
+		return "-";
+	}
 }

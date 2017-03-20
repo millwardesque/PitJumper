@@ -55,4 +55,8 @@ public class TriggeredPlatformSquare : PlatformSquare {
 
         return null;
     }
+
+	public override string PlatformTypeString () {
+		return "t";
+	}
 }

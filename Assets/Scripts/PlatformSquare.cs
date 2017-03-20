@@ -30,6 +30,7 @@ public abstract class PlatformSquare : MonoBehaviour {
 		this.GetComponent<SpriteRenderer> ().sprite = data.sprite;
 	}
 
+	public abstract string PlatformTypeString ();
 	public abstract bool CanPlayerLandHereNow();
 	public abstract bool IsLandableSquare();
 

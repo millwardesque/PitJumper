@@ -20,6 +20,10 @@ public class DisappearingSquare : PlatformSquare {
 		return true;
 	}
 
+	public override string PlatformTypeString () {
+		return "d";
+	}
+
 	void Update() {
 		m_currentCycle += Time.deltaTime;
 		while (m_currentCycle > m_cycleDuration) {

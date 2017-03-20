@@ -10,4 +10,8 @@ public class SolidPlatformSquare : PlatformSquare {
 	public override bool IsLandableSquare() {
 		return true;
 	}
+
+	public override string PlatformTypeString () {
+		return "o";
+	}
 }

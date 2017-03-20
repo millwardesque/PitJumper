@@ -11,6 +11,10 @@ public struct GridCoord {
 		this.y = y;
 	}
 
+	public static GridCoord EmptyCoord {
+		get { return new GridCoord (-1, -1); }
+	}
+
 	public static bool operator ==(GridCoord c1, GridCoord c2) {
 		return c1.x == c2.x && c1.y == c2.y;
 	}
@@ -65,13 +69,12 @@ public class LevelGrid : MonoBehaviour {
 
 		Regex elementPattern = new Regex(@"^\s*([a-zA-Z0-9\-]+)(\[(.+)\])?");
 
-		GridCoord playerStart = new GridCoord(0, 0);
+		GridCoord playerStart = GridCoord.EmptyCoord;
 		m_grid = new PlatformSquare[gridWidth, gridHeight];
 
-		Dictionary<string, ToggleTriggerPlatformSquare> toggleTriggerSquares = new Dictionary<string, ToggleTriggerPlatformSquare> ();
-		Dictionary<string, TriggeredPlatformSquare> triggeredSquares = new Dictionary<string, TriggeredPlatformSquare> ();
-		Dictionary<string, WarpSquare> warpSquares1 = new Dictionary<string, WarpSquare> ();
-		Dictionary<string, WarpSquare> warpSquares2 = new Dictionary<string, WarpSquare> ();
+		Dictionary<string, ToggleTriggerPlatformSquare> triggers = new Dictionary<string, ToggleTriggerPlatformSquare> ();
+		Dictionary<string, TriggeredPlatformSquare> triggerTargets = new Dictionary<string, TriggeredPlatformSquare> ();
+		Dictionary<string, WarpSquare> warps = new Dictionary<string, WarpSquare> ();
 		for (int x = 0; x < gridWidth; ++x) {
 			for (int y = 0; y < gridHeight; ++y) {
 				Match match = elementPattern.Match (levelData [y] [x]);
@@ -81,53 +84,40 @@ public class LevelGrid : MonoBehaviour {
 
 				string tileType = match.Groups [1].Value;
 				Dictionary<string, string> attributes = (match.Groups.Count == 4 ? ExtractTileAttributes(match.Groups [3].Value) : new Dictionary<string, string>());
-
-				if (tileType == "e") {
+				if (tileType == winPrefab.PlatformTypeString()) {
 					ReplaceSquare (winPrefab, winSquareData, x, y, attributes);
-				} else if (tileType == "-") {
+				} else if (tileType == emptyPrefab.PlatformTypeString()) {
 					ReplaceSquare (emptyPrefab, emptySquareData, x, y, attributes);
-				} else if (tileType == "o") {
+				} else if (tileType == solidPrefab.PlatformTypeString()) {
 					ReplaceSquare (solidPrefab, solidPlatformData, x, y, attributes);
-				} else if (tileType == "d") {
+				} else if (tileType == disappearingSquare.PlatformTypeString()) {
 					ReplaceSquare (disappearingSquare, disappearingSquareData, x, y, attributes);
-				} else if (tileType == "s") {
-					playerStart = new GridCoord (x, y);
-					ReplaceSquare (solidPrefab, solidPlatformData, x, y, attributes);
-				} else if (tileType == "L") {
+				} else if (tileType == lightSwitchSquare.PlatformTypeString()) {
 					ReplaceSquare (lightSwitchSquare, lightSwitchData, x, y, attributes);
-				} else if (tileType == "T") {
+				} else if (tileType == toggleTriggerPlatformSquare.PlatformTypeString()) {
 					ReplaceSquare (toggleTriggerPlatformSquare, toggleTriggerSquareData, x, y, attributes);
 
 					if (m_grid[x, y].GroupId != "") {
-						toggleTriggerSquares[ m_grid[x, y].GroupId ] = m_grid [x, y] as ToggleTriggerPlatformSquare;
+						triggers[ m_grid[x, y].GroupId ] = m_grid [x, y] as ToggleTriggerPlatformSquare;
 					}
 					else {
 						Debug.LogWarning("Error loading toggle-trigger square: No Group ID was supplied");
 					}
-				} else if (tileType == "t") {
+				} else if (tileType == triggeredPlatformSquare.PlatformTypeString()) {
 					ReplaceSquare (triggeredPlatformSquare, triggeredSquareData, x, y, attributes);
 
 					if (m_grid[x, y].GroupId != "") {
-						triggeredSquares[ m_grid[x, y].GroupId ] = m_grid [x, y] as TriggeredPlatformSquare;
+						triggerTargets[ m_grid[x, y].GroupId ] = m_grid [x, y] as TriggeredPlatformSquare;
 					}
 					else {
 						Debug.LogWarning("Error loading triggerable square: No Group ID was supplied");
 					}
 
-				} else if (tileType == "W") {
+				} else if (tileType == warpSquare.PlatformTypeString()) {
 					ReplaceSquare (warpSquare, warpSquareData, x, y, attributes);
 
 					if (m_grid[x, y].GroupId != "") {
-						warpSquares1[ m_grid[x, y].GroupId ] = m_grid [x, y] as WarpSquare;
-					}
-					else {
-						Debug.LogWarning("Error loading warp square: No Group ID was supplied");
-					}
-				} else if (tileType == "w") {
-					ReplaceSquare (warpSquare, warpSquareData, x, y, attributes);
-
-					if (m_grid[x, y].GroupId != "") {
-						warpSquares2[ m_grid[x, y].GroupId ] = m_grid [x, y] as WarpSquare;
+						warps[ m_grid[x, y].GroupId ] = m_grid [x, y] as WarpSquare;
 					}
 					else {
 						Debug.LogWarning("Error loading warp square: No Group ID was supplied");
@@ -141,30 +131,46 @@ public class LevelGrid : MonoBehaviour {
 
 				if (m_grid [x, y] != null) {
 					m_grid [x, y].InitializeFromStringAttributes (attributes);
+
+					if (attributes.ContainsKey("player") && attributes["player"] == "1") {
+						playerStart = new GridCoord (x, y);
+					}
 				}
 			}
 		}
 
-		foreach (string key in toggleTriggerSquares.Keys) {
-			if (triggeredSquares[key] && toggleTriggerSquares[key]) {
-				toggleTriggerSquares[key].triggerSquare = triggeredSquares[key];
-				triggeredSquares[key].toggleSquare = toggleTriggerSquares[key];
+		Debug.Log ("Mapping triggers");
+		foreach (string key in triggers.Keys) {
+			if (triggers[key] && triggerTargets[key]) {
+				triggers[key].triggerSquare = triggerTargets[key];
+				triggerTargets[key].toggleSquare = triggers[key];
 			} else {
 				Debug.Log ("Warning: Trigger square #" + key + " has no toggle square, or vice-versa");
 			}
 		}
 
-		foreach (string key in warpSquares1.Keys) {
-			if (warpSquares1[key] && warpSquares2[key]) {
-				warpSquares1[key].destination = warpSquares2[key];
-				warpSquares2[key].destination = warpSquares1[key];
-			} else {
-				Debug.Log ("Warning: Warp square #" + key + " has no endpoint square, or vice-versa");
+		Debug.Log ("Mapping warps");
+		foreach (string key in warps.Keys) {
+			for (int x = 0; x < gridWidth; ++x) {
+				for (int y = 0; y < gridHeight; ++y) {
+					if (m_grid [x, y].GroupId == key && m_grid [x, y] != warps [key]) {
+						warps [key].destination = m_grid [x, y];
+					}
+				}
+			}
+
+			if (warps[key].destination == null) {
+				Debug.Log ("Warning: Warp square #" + key + " has no endpoint square");
 			}
 		}
 
-		player.Grid = this;
-		player.TransportToCoord(playerStart);
+		Debug.Log ("Processing player start");
+		if (playerStart != GridCoord.EmptyCoord) {
+			player.Grid = this;
+			player.TransportToCoord (playerStart);
+		} else {
+			Debug.LogError ("Error: Level has no player start square");
+		}
 	}
 
 	public void ReplaceSquare(PlatformSquare prefab, PlatformSquareData squareData, int x, int y, Dictionary<string, string> attributes) {

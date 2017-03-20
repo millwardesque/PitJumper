@@ -58,4 +58,8 @@ public class ToggleTriggerPlatformSquare : PlatformSquare {
 
 		return null;
 	}
+
+	public override string PlatformTypeString () {
+		return "T";
+	}
 }

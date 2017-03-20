@@ -44,4 +44,8 @@ public class LightSwitch : PlatformSquare
 			}
 		}
 	}
+
+	public override string PlatformTypeString () {
+		return "L";
+	}
 }

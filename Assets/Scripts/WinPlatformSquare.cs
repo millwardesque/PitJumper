@@ -24,4 +24,8 @@ public class WinPlatformSquare : PlatformSquare {
 			}
 		}
 	}
+
+	public override string PlatformTypeString () {
+		return "e";
+	}
 }

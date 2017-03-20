@@ -7,7 +7,7 @@ e o
 - -
 L[ambient=1.0;0.1;0.2,oneway=y] o
 - -
-o s
+o o[player=1]
 - -
 ###
 [meta]
@@ -16,9 +16,9 @@ ambientLightColour: 0.2 0 0 1
 playerLightSize: 4.0
 [tiles]
 - -       W[gid=1] - o - o -
-- -       -    	  s - o - o
+- -       -    	  o[player=1] - o - o
 - -    	  o    	  - o - o -
-e w[gid=1] -    	  - - - o o
+e d[gid=1] -    	  - - - o o
 ###
 [tiles]
 o - o o o - o -
@@ -27,20 +27,20 @@ o - o - o - o -
 - o - o - o - o
 o - o - o - o -
 - o - o - o - o
-o - s - o - o -
+o - o[player=1] - o - o -
 - e - o - o - o
 ###
 [tiles]
-e t[gid=1] -
+e o[gid=1] -
 - -    	  -
 - o    	  T[gid=1,oneway=y]
 - -    	  -
-- s    	  -
+- o[player=1]   	  -
 - -    	  -
 ###
 [tiles]
 o - o - o - o o
-- s - o - o - T[gid=2,oneway=y]
+- o[player=1] - o - o - T[gid=2,oneway=y]
 o - o - o - - -
 - - t[gid=2] - - - - o
 - - - o - o - -
