@@ -12,6 +12,7 @@ public class LevelBuilder : MonoBehaviour {
 	public TriggeredPlatformSquare triggeredPlatformSquare;
 	public DisappearingSquare disappearingSquare;
 	public WarpSquare warpSquare;
+	public LightSwitch lightSwitchSquare;
 
 	List<PlatformSquare> m_squareTypes;
 	List<PlatformSquareData> m_squareData;
@@ -31,6 +32,7 @@ public class LevelBuilder : MonoBehaviour {
 		m_squareTypes.Add (triggeredPlatformSquare);
 		m_squareTypes.Add (disappearingSquare);
 		m_squareTypes.Add (warpSquare);
+		m_squareTypes.Add (lightSwitchSquare);
 
 		PlatformSquareData emptySquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Empty Square Prototype");
 		PlatformSquareData solidPlatformData = Resources.Load<PlatformSquareData> ("Platform Squares/Solid Platform Prototype");
@@ -39,6 +41,7 @@ public class LevelBuilder : MonoBehaviour {
 		PlatformSquareData triggeredSquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Triggered Platform Prototype");
 		PlatformSquareData disappearingSquareData = Resources.Load<PlatformSquareData>("Platform Squares/Disappearing Square Prototype");
 		PlatformSquareData warpSquareData = Resources.Load<PlatformSquareData>("Platform Squares/Warp Square Prototype");
+		PlatformSquareData lightSwitchSquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Light Switch Prototype");
 
 		m_squareData = new List<PlatformSquareData> ();
 		m_squareData.Add (emptySquareData);
@@ -48,6 +51,7 @@ public class LevelBuilder : MonoBehaviour {
 		m_squareData.Add (triggeredSquareData);
 		m_squareData.Add (disappearingSquareData);
 		m_squareData.Add (warpSquareData);
+		m_squareData.Add (lightSwitchSquareData);
 	}
 	
 	// Update is called once per frame

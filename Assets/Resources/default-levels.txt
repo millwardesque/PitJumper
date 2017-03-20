@@ -1,19 +1,19 @@
 [meta]
 backgroundColour: 0 0 0 1
 ambientLightColour: 0 0 0 1
-playerLightSize: 6.0
+playerLightSize: 7.0
 [tiles]
 e o
 - -
-- o
+L[ambient=1.0;0.1;0.2,oneway=y] o
 - -
 o s
 - -
 ###
 [meta]
 backgroundColour: 0 0 0 1
-ambientLightColour: 0.1 0 0 1
-playerLightSize: 2.0
+ambientLightColour: 0.2 0 0 1
+playerLightSize: 4.0
 [tiles]
 - -       W[id=1] - o - o -
 - -       -    	  s - o - o

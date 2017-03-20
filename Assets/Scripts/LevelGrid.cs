@@ -48,7 +48,7 @@ public class LevelGrid : MonoBehaviour {
 		get { return m_grid; }
 	}
 
-	public void InitializeGrid(string[][] levelData, EmptyPlatformSquare emptyPrefab, SolidPlatformSquare solidPrefab, WinPlatformSquare winPrefab, ToggleTriggerPlatformSquare toggleTriggerPlatformSquare, TriggeredPlatformSquare triggeredPlatformSquare, DisappearingSquare disappearingSquare, WarpSquare warpSquare, Player player) {
+	public void InitializeGrid(string[][] levelData, EmptyPlatformSquare emptyPrefab, SolidPlatformSquare solidPrefab, WinPlatformSquare winPrefab, ToggleTriggerPlatformSquare toggleTriggerPlatformSquare, TriggeredPlatformSquare triggeredPlatformSquare, DisappearingSquare disappearingSquare, WarpSquare warpSquare, LightSwitch lightSwitchSquare, Player player) {
 		int gridWidth = levelData[0].Length;
 		int gridHeight = levelData.Length;
 
@@ -59,6 +59,7 @@ public class LevelGrid : MonoBehaviour {
 		PlatformSquareData triggeredSquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Triggered Platform Prototype");
 		PlatformSquareData disappearingSquareData = Resources.Load<PlatformSquareData>("Platform Squares/Disappearing Square Prototype");
 		PlatformSquareData warpSquareData = Resources.Load<PlatformSquareData>("Platform Squares/Warp Square Prototype");
+		PlatformSquareData lightSwitchData = Resources.Load<PlatformSquareData> ("Platform Squares/Light Switch Prototype");
 
 		DeleteGrid ();
 
@@ -92,6 +93,24 @@ public class LevelGrid : MonoBehaviour {
 				} else if (tileType == "s") {
 					playerStart = new GridCoord (x, y);
 					ReplaceSquare (solidPrefab, solidPlatformData, x, y);
+				} else if (tileType == "L") {
+					ReplaceSquare (lightSwitchSquare, lightSwitchData, x, y);
+
+					bool isOneWay = attributes.ContainsKey ("oneway") && attributes ["oneway"].ToLower () == "y";
+					(m_grid [x, y] as LightSwitch).oneWaySwitch = isOneWay;
+
+					string colorString = attributes.ContainsKey ("ambient") ? attributes ["ambient"] : "";
+					if (colorString != "") {
+						string[] components = colorString.Split (';');
+						if (components.Length >= 3) {
+							float r = float.Parse (components [0]);
+							float g = float.Parse (components [1]);
+							float b = float.Parse (components [2]);
+							(m_grid [x, y] as LightSwitch).ambient = new Color (r, g, b);
+						} else {
+							Debug.LogError ("LightSwitch color string '" + colorString + "' doesn't match 'r;g;b' format");
+						}
+					}
 				} else if (tileType == "T") {
 					ReplaceSquare (toggleTriggerPlatformSquare, toggleTriggerSquareData, x, y);
 
