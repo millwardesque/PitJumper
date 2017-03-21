@@ -52,29 +52,34 @@ public class LevelGrid : MonoBehaviour {
 		get { return m_grid; }
 	}
 
-	public void InitializeGrid(string[][] levelData, EmptyPlatformSquare emptyPrefab, SolidPlatformSquare solidPrefab, WinPlatformSquare winPrefab, ToggleTriggerPlatformSquare toggleTriggerPlatformSquare, TriggeredPlatformSquare triggeredPlatformSquare, DisappearingSquare disappearingSquare, WarpSquare warpSquare, LightSwitch lightSwitchSquare, Player player) {
+	public void InitializeGrid(string[][] levelData, PlatformSquare[] platformPrefabs, Player player) {
 		int gridWidth = levelData[0].Length;
 		int gridHeight = levelData.Length;
 
-		PlatformSquareData emptySquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Empty Square Prototype");
-		PlatformSquareData solidPlatformData = Resources.Load<PlatformSquareData> ("Platform Squares/Solid Platform Prototype");
-		PlatformSquareData winSquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Win Platform Prototype");
-		PlatformSquareData toggleTriggerSquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Toggle Trigger Prototype");
-		PlatformSquareData triggeredSquareData = Resources.Load<PlatformSquareData> ("Platform Squares/Triggered Platform Prototype");
-		PlatformSquareData disappearingSquareData = Resources.Load<PlatformSquareData>("Platform Squares/Disappearing Square Prototype");
-		PlatformSquareData warpSquareData = Resources.Load<PlatformSquareData>("Platform Squares/Warp Square Prototype");
-		PlatformSquareData lightSwitchData = Resources.Load<PlatformSquareData> ("Platform Squares/Light Switch Prototype");
+		// Load the available level grid prefabs and resources.
+		Dictionary<string, PlatformSquare> platformMap = new Dictionary<string, PlatformSquare>();
+		Dictionary<string, PlatformSquareData> platformData = new Dictionary<string, PlatformSquareData> ();
+		foreach (PlatformSquare prefab in platformPrefabs) {
+			platformMap [prefab.GetPlatformTypeString()] = prefab;
+			platformData [prefab.GetPlatformTypeString()] = Resources.Load<PlatformSquareData> ("Platform Squares/" + prefab.GetResourceName() + " Prototype");
 
+			if (!platformData.ContainsKey (prefab.GetPlatformTypeString()) || platformData [prefab.GetPlatformTypeString()] == null) {
+				Debug.LogError ("Error: No platform resource data for platform type '" + prefab.GetPlatformTypeString() + "' was found (using resource prefix '" + prefab.GetResourceName() + "')");
+			} else {
+				Debug.Log("Loaded platform type '" + prefab.GetPlatformTypeString() + "'");
+			}
+		}
+
+		// Clean up the old grid and create a new one.
 		DeleteGrid ();
-
-		Regex elementPattern = new Regex(@"^\s*([a-zA-Z0-9\-]+)(\[(.+)\])?");
-
-		GridCoord playerStart = GridCoord.EmptyCoord;
 		m_grid = new PlatformSquare[gridWidth, gridHeight];
 
+		GridCoord playerStart = GridCoord.EmptyCoord;
 		Dictionary<string, ToggleTriggerPlatformSquare> triggers = new Dictionary<string, ToggleTriggerPlatformSquare> ();
-		Dictionary<string, TriggeredPlatformSquare> triggerTargets = new Dictionary<string, TriggeredPlatformSquare> ();
 		Dictionary<string, WarpSquare> warps = new Dictionary<string, WarpSquare> ();
+
+		// Load the tiles.
+		Regex elementPattern = new Regex(@"^\s*([a-zA-Z0-9\-]+)(\[(.+)\])?");
 		for (int x = 0; x < gridWidth; ++x) {
 			for (int y = 0; y < gridHeight; ++y) {
 				Match match = elementPattern.Match (levelData [y] [x]);
@@ -82,64 +87,38 @@ public class LevelGrid : MonoBehaviour {
 					continue;
 				}
 
+				// Find the correct tile.
 				string tileType = match.Groups [1].Value;
 				Dictionary<string, string> attributes = (match.Groups.Count == 4 ? ExtractTileAttributes(match.Groups [3].Value) : new Dictionary<string, string>());
-				if (tileType == winPrefab.PlatformTypeString()) {
-					ReplaceSquare (winPrefab, winSquareData, x, y, attributes);
-				} else if (tileType == emptyPrefab.PlatformTypeString()) {
-					ReplaceSquare (emptyPrefab, emptySquareData, x, y, attributes);
-				} else if (tileType == solidPrefab.PlatformTypeString()) {
-					ReplaceSquare (solidPrefab, solidPlatformData, x, y, attributes);
-				} else if (tileType == disappearingSquare.PlatformTypeString()) {
-					ReplaceSquare (disappearingSquare, disappearingSquareData, x, y, attributes);
-				} else if (tileType == lightSwitchSquare.PlatformTypeString()) {
-					ReplaceSquare (lightSwitchSquare, lightSwitchData, x, y, attributes);
-				} else if (tileType == toggleTriggerPlatformSquare.PlatformTypeString()) {
-					ReplaceSquare (toggleTriggerPlatformSquare, toggleTriggerSquareData, x, y, attributes);
-
-					if (m_grid[x, y].GroupId != "") {
-						triggers[ m_grid[x, y].GroupId ] = m_grid [x, y] as ToggleTriggerPlatformSquare;
-					}
-					else {
-						Debug.LogWarning("Error loading toggle-trigger square: No Group ID was supplied");
-					}
-				} else if (tileType == triggeredPlatformSquare.PlatformTypeString()) {
-					ReplaceSquare (triggeredPlatformSquare, triggeredSquareData, x, y, attributes);
-
-					if (m_grid[x, y].GroupId != "") {
-						triggerTargets[ m_grid[x, y].GroupId ] = m_grid [x, y] as TriggeredPlatformSquare;
-					}
-					else {
-						Debug.LogWarning("Error loading triggerable square: No Group ID was supplied");
-					}
-
-				} else if (tileType == warpSquare.PlatformTypeString()) {
-					ReplaceSquare (warpSquare, warpSquareData, x, y, attributes);
-
-					if (m_grid[x, y].GroupId != "") {
-						warps[ m_grid[x, y].GroupId ] = m_grid [x, y] as WarpSquare;
-					}
-					else {
-						Debug.LogWarning("Error loading warp square: No Group ID was supplied");
-					}
+				if (platformMap.ContainsKey(tileType) && platformMap.ContainsKey(tileType)) {
+					ReplaceSquare (platformMap[tileType], platformData[tileType], x, y, attributes);
 				}
 				else {
-					Debug.Log (string.Format ("Unknown grid square type '{0}' at ({1}, {2})", tileType, x, y));
+					Debug.Log (string.Format ("Error loading grid square type '{0}' at ({1}, {2}): Either type is unknown or associated data wasn't found", tileType, x, y));
 					Destroy (m_grid [x, y]);
 					continue;
 				}
 
+				// Do any custom loading stuff here.
 				if (m_grid [x, y] != null) {
 					m_grid [x, y].InitializeFromStringAttributes (attributes);
 
-					if (attributes.ContainsKey("player") && attributes["player"] == "1") {
+					if (attributes.ContainsKey ("player") && attributes ["player"] == "1") {
 						playerStart = new GridCoord (x, y);
 					}
+
+					if (m_grid [x, y] is WarpSquare && m_grid [x, y].GroupId != "") {
+						warps [m_grid [x, y].GroupId] = m_grid [x, y] as WarpSquare;
+					} else if (m_grid [x, y] is ToggleTriggerPlatformSquare && m_grid [x, y].GroupId != "") {
+						triggers [m_grid [x, y].GroupId] = m_grid [x, y] as ToggleTriggerPlatformSquare;
+					}
+				} else {
+					Debug.Log(string.Format("Error trying to process grid square type '{0}' at ({1}, {2}): Grid square is null", tileType, x, y));
 				}
 			}
 		}
 
-		Debug.Log ("Mapping triggers");
+		// Attach the warp and trigger relationships.
 		foreach (string key in triggers.Keys) {
 			for (int x = 0; x < gridWidth; ++x) {
 				for (int y = 0; y < gridHeight; ++y) {
@@ -155,7 +134,6 @@ public class LevelGrid : MonoBehaviour {
 			}
 		}
 
-		Debug.Log ("Mapping warps");
 		foreach (string key in warps.Keys) {
 			for (int x = 0; x < gridWidth; ++x) {
 				for (int y = 0; y < gridHeight; ++y) {
@@ -170,7 +148,7 @@ public class LevelGrid : MonoBehaviour {
 			}
 		}
 
-		Debug.Log ("Processing player start");
+		// Set the player-start position.
 		if (playerStart != GridCoord.EmptyCoord) {
 			player.Grid = this;
 			player.TransportToCoord (playerStart);

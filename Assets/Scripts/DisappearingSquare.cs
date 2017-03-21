@@ -20,7 +20,7 @@ public class DisappearingSquare : PlatformSquare {
 		return true;
 	}
 
-	public override string PlatformTypeString () {
+	public override string GetPlatformTypeString () {
 		return "d";
 	}
 
@@ -33,5 +33,9 @@ public class DisappearingSquare : PlatformSquare {
 		float a = CanPlayerLandHereNow() ? 1f : 0f;
 		Color color = new Color (m_renderer.color.r, m_renderer.color.b, m_renderer.color.g, a);
 		m_renderer.color = color;
+	}
+
+	public override string GetResourceName () {
+		return "Disappearing Square";
 	}
 }

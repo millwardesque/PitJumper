@@ -31,15 +31,7 @@ public class LevelDefinition {
 
 public class LevelManager : MonoBehaviour {
 	public Player playerPrefab;
-	public EmptyPlatformSquare emptyPlatformSquarePrefab;
-	public SolidPlatformSquare solidPlatformSquarePrefab;
-	public WinPlatformSquare winPlatformSquarePrefab;
-	public ToggleTriggerPlatformSquare toggleTriggerPlatformSquare;
-	public TriggeredPlatformSquare triggeredPlatformSquare;
-	public DisappearingSquare disappearingSquare;
-	public WarpSquare warpSquare;
-	public LightSwitch lightSwitchPrefab;
-
+	public PlatformSquare[] platformPrefabs;
 	public string levelFilename;
 
 	int m_activeLevel = -1;
@@ -49,7 +41,7 @@ public class LevelManager : MonoBehaviour {
 			if (value >= 0 && m_levels.Count > value) {
 				m_activeLevel = value;
 				m_player.Reset ();
-				m_grid.InitializeGrid (m_levels[value].levelGrid, emptyPlatformSquarePrefab, solidPlatformSquarePrefab, winPlatformSquarePrefab, toggleTriggerPlatformSquare, triggeredPlatformSquare, disappearingSquare, warpSquare, lightSwitchPrefab, m_player);
+				m_grid.InitializeGrid (m_levels[value].levelGrid, platformPrefabs, m_player);
 				RenderSettings.ambientLight = m_levels [value].ambientLightColour;
 				Camera.main.backgroundColor = m_levels [value].backgroundColour;
 				m_player.GetComponentInChildren<Light> ().range = m_levels [value].playerLightSize;

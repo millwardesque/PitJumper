@@ -30,7 +30,7 @@ public abstract class PlatformSquare : MonoBehaviour {
 		this.GetComponent<SpriteRenderer> ().sprite = data.sprite;
 	}
 
-	public abstract string PlatformTypeString ();
+	public abstract string GetPlatformTypeString ();
 	public abstract bool CanPlayerLandHereNow();
 	public abstract bool IsLandableSquare();
 
@@ -42,4 +42,6 @@ public abstract class PlatformSquare : MonoBehaviour {
 	public virtual void InitializeFromStringAttributes(Dictionary<string, string> attributes) {
 		m_groupId = attributes.ContainsKey ("gid") ? attributes ["gid"].ToLower() : "";
 	}
+
+	public abstract string GetResourceName ();
 }

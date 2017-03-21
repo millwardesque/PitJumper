@@ -25,7 +25,11 @@ public class WinPlatformSquare : PlatformSquare {
 		}
 	}
 
-	public override string PlatformTypeString () {
+	public override string GetPlatformTypeString () {
 		return "e";
+	}
+
+	public override string GetResourceName () {
+		return "Win Platform";
 	}
 }

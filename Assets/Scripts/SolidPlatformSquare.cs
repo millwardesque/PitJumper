@@ -11,7 +11,11 @@ public class SolidPlatformSquare : PlatformSquare {
 		return true;
 	}
 
-	public override string PlatformTypeString () {
+	public override string GetPlatformTypeString () {
 		return "o";
+	}
+
+	public override string GetResourceName () {
+		return "Solid Platform";
 	}
 }

@@ -20,7 +20,18 @@ public class WarpSquare : PlatformSquare {
 		}
 	}
 
-	public override string PlatformTypeString () {
+	public override string GetPlatformTypeString () {
 		return "W";
+	}
+
+	public override void InitializeFromStringAttributes (Dictionary<string, string> attributes) {
+		base.InitializeFromStringAttributes (attributes);
+		if (GroupId == "") {
+			Debug.LogWarning("Error loading warp square: No Group ID was supplied");
+		}
+	}
+
+	public override string GetResourceName () {
+		return "Warp Square";
 	}
 }

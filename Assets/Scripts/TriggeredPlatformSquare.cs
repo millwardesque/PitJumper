@@ -56,7 +56,11 @@ public class TriggeredPlatformSquare : PlatformSquare {
         return null;
     }
 
-	public override string PlatformTypeString () {
+	public override string GetPlatformTypeString () {
 		return "t";
+	}
+
+	public override string GetResourceName () {
+		return "Triggered Platform";
 	}
 }

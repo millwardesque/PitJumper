@@ -45,6 +45,10 @@ public class ToggleTriggerPlatformSquare : PlatformSquare {
 	public override void InitializeFromStringAttributes(Dictionary<string, string> attributes) {
 		base.InitializeFromStringAttributes (attributes);
 		oneWayToggle = attributes.ContainsKey ("oneway") && attributes ["oneway"].ToLower () == "y";
+
+		if (GroupId == "") {
+			Debug.LogWarning("Error loading toggle-trigger square: No Group ID was supplied");
+		}
 	}
 
 	TriggeredPlatformSquare FindUnusedTriggeredPlatformSquare(LevelGrid grid) {
@@ -59,7 +63,11 @@ public class ToggleTriggerPlatformSquare : PlatformSquare {
 		return null;
 	}
 
-	public override string PlatformTypeString () {
+	public override string GetPlatformTypeString () {
 		return "T";
+	}
+
+	public override string GetResourceName () {
+		return "Toggle Trigger";
 	}
 }

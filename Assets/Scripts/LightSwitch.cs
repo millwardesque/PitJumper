@@ -45,7 +45,11 @@ public class LightSwitch : PlatformSquare
 		}
 	}
 
-	public override string PlatformTypeString () {
+	public override string GetPlatformTypeString () {
 		return "L";
+	}
+
+	public override string GetResourceName () {
+		return "Light Switch";
 	}
 }

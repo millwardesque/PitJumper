@@ -20,7 +20,11 @@ public class EmptyPlatformSquare : PlatformSquare {
 		}
 	}
 
-	public override string PlatformTypeString () {
+	public override string GetPlatformTypeString () {
 		return "-";
+	}
+
+	public override string GetResourceName () {
+		return "Empty Square";
 	}
 }
