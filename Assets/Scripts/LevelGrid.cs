@@ -52,6 +52,12 @@ public class LevelGrid : MonoBehaviour {
 		get { return m_grid; }
 	}
 
+	/// <summary>
+	/// Initializes the level grid.
+	/// </summary>
+	/// <param name="levelData">String level data.</param>
+	/// <param name="platformPrefabs">Platform prefabs available to this level.</param>
+	/// <param name="player">Player to position in the grid.</param>
 	public void InitializeGrid(string[][] levelData, PlatformSquare[] platformPrefabs, Player player) {
 		int gridWidth = levelData[0].Length;
 		int gridHeight = levelData.Length;
@@ -101,8 +107,6 @@ public class LevelGrid : MonoBehaviour {
 
 				// Do any custom loading stuff here.
 				if (m_grid [x, y] != null) {
-					m_grid [x, y].InitializeFromStringAttributes (attributes);
-
 					if (attributes.ContainsKey ("player") && attributes ["player"] == "1") {
 						playerStart = new GridCoord (x, y);
 					}
@@ -157,6 +161,14 @@ public class LevelGrid : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Replaces a grid square with a new one from a prefab.
+	/// </summary>
+	/// <param name="prefab">Prefab.</param>
+	/// <param name="squareData">Square data.</param>
+	/// <param name="x">The x coordinate.</param>
+	/// <param name="y">The y coordinate.</param>
+	/// <param name="attributes">Attributes.</param>
 	public void ReplaceSquare(PlatformSquare prefab, PlatformSquareData squareData, int x, int y, Dictionary<string, string> attributes) {
 		if (m_grid [x, y] != null) {
 			m_grid [x, y].OnRemoveFromLevel (this, new GridCoord(x, y));
@@ -218,19 +230,16 @@ public class LevelGrid : MonoBehaviour {
         int warpID = 1;
 		for (int y = 0; y < m_grid.GetLength(1); ++y) {
 			for (int x = 0; x < m_grid.GetLength(0); ++x) {
-				if (m_grid[x, y] is EmptyPlatformSquare) {
-					levelData [y] [x] = "-";
+				if (m_grid[x, y] == null) {
+					Debug.LogWarning (string.Format ("Warning: Trying to write null grid square at ({1}, {2})", x, y));
+					continue;
 				}
-				else if (m_grid[x, y] is SolidPlatformSquare) {
-					levelData [y] [x] = "o";
-				}
-				else if (m_grid[x, y] is DisappearingSquare) {
-					levelData [y] [x] = "d";
-				}
-				else if (m_grid[x, y] is WinPlatformSquare) {
-					levelData [y] [x] = "e";
-				}
-				else if (m_grid[x, y] is ToggleTriggerPlatformSquare) {
+
+				levelData [y] [x] = m_grid [x, y].GetPlatformTypeString ();
+
+				// Custom grid processing.
+				// @TODO Relocate this into a per-PlatformSquare "GetAttributeString()" method.
+				if (m_grid[x, y] is ToggleTriggerPlatformSquare) {
 					if (string.IsNullOrEmpty(levelData[y][x])) {
 						string triggerAttributes = "id=" + triggerID + ",oneway=" + ((m_grid [x, y] as ToggleTriggerPlatformSquare).oneWayToggle ? "y" : "n");
 						string triggerString = "T[" + triggerAttributes + "]";
@@ -269,10 +278,6 @@ public class LevelGrid : MonoBehaviour {
                         warpID++;
                     }
                 }
-                else {
-					Debug.Log (string.Format ("Unknown grid square type '{0}' at ({1}, {2})", m_grid[x, y].GetType(), x, y));
-					continue;
-				}
 			}
 		}
 		level.levelGrid = levelData;
