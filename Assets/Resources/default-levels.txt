@@ -6,9 +6,9 @@ playerLightSize: 7.0
 e o
 - -
 L[ambient=1.0;0.1;0.2,oneway=y] o
-- -
+T[gid=1] -
 o o[player=1]
-- -
+- t[gid=1]
 ###
 [meta]
 backgroundColour: 0 0 0 1

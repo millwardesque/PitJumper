@@ -141,11 +141,17 @@ public class LevelGrid : MonoBehaviour {
 
 		Debug.Log ("Mapping triggers");
 		foreach (string key in triggers.Keys) {
-			if (triggers[key] && triggerTargets[key]) {
-				triggers[key].triggerSquare = triggerTargets[key];
-				triggerTargets[key].toggleSquare = triggers[key];
-			} else {
-				Debug.Log ("Warning: Trigger square #" + key + " has no toggle square, or vice-versa");
+			for (int x = 0; x < gridWidth; ++x) {
+				for (int y = 0; y < gridHeight; ++y) {
+					if (m_grid [x, y].GroupId == key && m_grid[x, y] is TriggeredPlatformSquare && m_grid [x, y] != triggers [key]) {
+						triggers [key].triggerSquare = m_grid [x, y] as TriggeredPlatformSquare;
+						(m_grid [x, y] as TriggeredPlatformSquare).toggleSquare = triggers [key];
+					}
+				}
+			}
+
+			if (triggers[key].triggerSquare == null) {
+				Debug.Log ("Warning: Trigger square #" + key + " has no toggle square");
 			}
 		}
 
